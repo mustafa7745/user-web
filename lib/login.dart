@@ -41,6 +41,7 @@ class LoginPage extends StatelessWidget {
                     return Column(
                       children: [
                         TextField(
+                          keyboardType: TextInputType.number,
                           controller: phoneController,
                           textDirection: TextDirection.rtl,
                           decoration: InputDecoration(
