@@ -96,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     MaterialPageRoute(builder: (context) => LoginPage()),
                   );
                 },
-                child: const Text("تسجيل"))),
+                child: const Text("تسجيل الدخول"))),
       ),
       // floatingActionButton: FloatingActionButton(
       //   onPressed: _incrementCounter,
