@@ -18,15 +18,15 @@ class LoginPage extends StatelessWidget {
           children: [
             // أيقونة التطبيق
             Image.asset(
-              'assets/images/ic_launcher_round.png',
+              'image.png',
               width: 100,
               height: 100,
             ),
 
             // العنوان
-            Text(
+            const Text(
               'تسجيل الدخول',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 24, fontFamily: 'bukraBold'),
               textAlign: TextAlign.center,
             ),
 

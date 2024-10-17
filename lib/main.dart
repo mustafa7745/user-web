@@ -14,6 +14,27 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(
+            fontFamily: 'bukraBold', // Set your custom font here
+            fontSize: 16,
+          ),
+          bodyLarge: TextStyle(
+            fontFamily: 'bukraBold',
+            fontSize: 14,
+          ),
+          // You can define other text styles as needed
+          bodyMedium: TextStyle(
+            fontFamily: 'bukraBold',
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+          titleMedium: TextStyle(
+            fontFamily: 'bukraBold',
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         // This is the theme of your application.
         //
         // TRY THIS: Try running your application with "flutter run". You'll see
@@ -58,6 +79,16 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
+  void delayedFunction() async {
+    print('Delay starts');
+    await Future.delayed(const Duration(seconds: 2)); // Delay for 2 seconds
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+    );
+    print('Delay ends');
+  }
+
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -71,6 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    delayedFunction();
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -86,17 +118,10 @@ class _MyHomePageState extends State<MyHomePage> {
             fit: BoxFit.cover, // This will cover the whole screen
           ),
         ),
-        child: Center(
+        child: const Center(
             // Center is a layout widget. It takes a single child and positions it
             // in the middle of the parent.
-            child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                  );
-                },
-                child: const Text("تسجيل الدخول"))),
+            child: Column()),
       ),
       // floatingActionButton: FloatingActionButton(
       //   onPressed: _incrementCounter,
