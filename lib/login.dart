@@ -61,6 +61,8 @@ class LoginPage extends StatelessWidget {
                     decoration: InputDecoration(
                       hintTextDirection: TextDirection.rtl,
                       labelText: 'رقم الهاتف',
+                      errorStyle:
+                          TextStyle(fontFamily: 'bukraBold', fontSize: 6),
                       errorText: !stateController.isValidPhone
                           ? 'الرجاء إدخال رقم هاتف صحيح (يجب أن يتكون من 9 أرقام ويبدأ بـ 70, 71, 73, 77, أو 78)'
                           : null,
