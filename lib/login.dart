@@ -54,7 +54,7 @@ class LoginPage extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.all(4.0),
                 ),
-                if (!isInstallPromptAvailable())
+                if (isInstallPromptAvailable())
                   ElevatedButton(
                     onPressed: () async {
                       // isPwaInstalled();
