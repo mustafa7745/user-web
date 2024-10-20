@@ -31,33 +31,9 @@
 
     <title>مطعم الارض الخضراء</title>
     <link rel="manifest" href="manifest.json" />
-    <script>
-      let deferredPrompt;
-  
-      window.addEventListener('beforeinstallprompt', (event) => {
-        event.preventDefault();
-        deferredPrompt = event;
-  
-        const installButton = document.getElementById('install-button');
-        installButton.style.display = 'block';
-  
-        installButton.addEventListener('click', () => {
-          deferredPrompt.prompt();
-          deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-              console.log('User accepted the install prompt');
-            } else {
-              console.log('User dismissed the install prompt');
-            }
-            deferredPrompt = null;
-            installButton.style.display = 'none'; // إخفاء الزر بعد التفاعل
-          });
-        });
-      });
-    </script>
+    
   </head>
   <body>
     <script src="flutter_bootstrap.js" async></script>
-    <button id="install-button" style="display:none;">تثبيت التطبيق</button>
   </body>
 </html>

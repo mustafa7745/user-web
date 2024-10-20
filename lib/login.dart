@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:gl1/dashboard.dart';
 import 'package:gl1/main.dart';
 import 'package:gl1/shared/mainCompose.dart';
+import 'package:gl1/shared/pwa.dart';
 import 'package:gl1/shared/requestServer.dart';
 import 'package:gl1/shared/stateController.dart';
 import 'package:gl1/shared/urls.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:html' as html;
 
 class LoginPage extends StatelessWidget {
   final TextEditingController phoneController = TextEditingController();
@@ -211,6 +213,11 @@ class LoginPage extends StatelessWidget {
                       )),
                 ),
 
+                ElevatedButton(
+                    onPressed: () {
+                      PwaHelper.initPwa();
+                    },
+                    child: Text("data")),
                 const SizedBox(height: 200),
 
                 // نص حقوق النشر

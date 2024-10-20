@@ -11,6 +11,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initLocalStorage();
+
   runApp(
     ChangeNotifierProvider(
       create: (context) => StateController(),
