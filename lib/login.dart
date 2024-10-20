@@ -133,9 +133,10 @@ class LoginPage extends StatelessWidget {
                       width: 5,
                     ),
                     ElevatedButton(
-                      onPressed: (stateController.password.length >= 4 &&
-                                  stateController.password.length <= 8) &&
-                              stateController.isValidPhone
+                      onPressed: stateController.password.length >= 4 &&
+                              stateController.password.length <= 8 &&
+                              stateController.isValidPhone &&
+                              phoneController.text.length == 9
                           ? () async {
                               sendPostRequestLogin();
                             }
