@@ -1,8 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:gl1/dashboard.dart';
+import 'package:gl1/init.dart';
 import 'package:gl1/login.dart';
+import 'package:gl1/shared/requestServer.dart';
+import 'package:gl1/shared/stateController.dart';
+import 'package:localstorage/localstorage.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initLocalStorage();
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => StateController(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -12,7 +26,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'مطعم الأرض الخضراء',
+      navigatorKey: navigatorKey,
       theme: ThemeData(
         textTheme: const TextTheme(
           titleLarge: TextStyle(
@@ -30,6 +45,11 @@ class MyApp extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
           titleMedium: TextStyle(
+            fontFamily: 'bukraBold',
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+          headlineMedium: TextStyle(
             fontFamily: 'bukraBold',
             fontSize: 12,
             fontWeight: FontWeight.bold,
@@ -53,7 +73,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page Mustafa'),
+      home: const MyHomePage(title: 'مطعم الارض الخضراء'),
     );
   }
 }
@@ -77,27 +97,32 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
   void delayedFunction() async {
-    print('Delay starts');
-    await Future.delayed(const Duration(seconds: 2)); // Delay for 2 seconds
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => LoginPage()),
-    );
-    print('Delay ends');
-  }
+    final requestserver = Requestserver();
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+    await Future.delayed(const Duration(seconds: 3)); // Delay for 2 seconds
+
+    if (!requestserver.isInit()) {
+      Navigator.pushAndRemoveUntil(
+        navigatorKey.currentContext!,
+        MaterialPageRoute(builder: (context) => InitPage()),
+        (Route<dynamic> route) => false,
+      );
+    } else {
+      if (requestserver.isLogined()) {
+        Navigator.pushAndRemoveUntil(
+          navigatorKey.currentContext!,
+          MaterialPageRoute(builder: (context) => DashboardPage()),
+          (Route<dynamic> route) => false,
+        );
+      } else {
+        Navigator.pushAndRemoveUntil(
+          navigatorKey.currentContext!,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+          (Route<dynamic> route) => false,
+        );
+      }
+    }
   }
 
   @override
@@ -114,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('onboard.JPG'),
+            image: AssetImage('assets/images/onboard.JPG'),
             fit: BoxFit.cover, // This will cover the whole screen
           ),
         ),
