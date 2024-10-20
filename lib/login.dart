@@ -204,7 +204,10 @@ class LoginPage extends StatelessWidget {
                     }
                   },
                   child: const Text('سياسة الاستخدام و شروط الخدمه',
-                      style: TextStyle(color: Colors.blue)),
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontFamily: 'bukraBold',
+                      )),
                 ),
 
                 const SizedBox(height: 200),
