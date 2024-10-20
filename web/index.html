@@ -49,13 +49,10 @@
         // }
         console.log("mustafaf");
         if (deferredPrompt) {
-         
           deferredPrompt.prompt();
           deferredPrompt.userChoice.then((choiceResult) => {
-           
-            
             if (choiceResult.outcome === "accepted") {
-              alert("Thanks for installing our app!");
+              alert("يتم الان تحميل التطبيق");
             } else {
               alert("Installation was dismissed.");
             }
@@ -64,6 +61,16 @@
         } else {
           alert("No installation prompt available.");
         }
+      }
+
+      function isInstallPromptAvailable() {
+        return deferredPrompt !== undefined;
+        // return window.matchMedia("(display-mode: standalone)").matches;
+        // if (deferredPrompt) {
+        //   return true;
+        // } else {
+        //   return false;
+        // }
       }
     </script>
   </head>

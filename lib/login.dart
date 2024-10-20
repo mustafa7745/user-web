@@ -54,6 +54,34 @@ class LoginPage extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.all(4.0),
                 ),
+                if (!isInstallPromptAvailable())
+                  ElevatedButton(
+                    onPressed: () async {
+                      // isPwaInstalled();
+                      js.context.callMethod('showInstallPrompt');
+                    },
+                    child: Text(
+                      " (تجربة افضل) تثبيت التطبيق في الشاشة الرئيسية",
+                      style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.white, // Text color
+                          fontFamily: 'bukraBold'),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 222, 165,
+                          68), // Set the background color to green
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius
+                            .zero, // Make it rectangular (no rounded corners)
+                      ),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 16.0, horizontal: 24.0), // Optional padding
+                    ),
+                  ),
+
+                SizedBox(
+                  height: 5,
+                ),
                 //
                 Directionality(
                   textDirection: TextDirection.rtl,
@@ -214,12 +242,6 @@ class LoginPage extends StatelessWidget {
                       )),
                 ),
 
-                ElevatedButton(
-                    onPressed: () {
-                      // PwaHelper.initPwa();
-                      js.context.callMethod('showInstallPrompt');
-                    },
-                    child: Text("data")),
                 const SizedBox(height: 200),
 
                 // نص حقوق النشر
@@ -227,6 +249,12 @@ class LoginPage extends StatelessWidget {
                 const Text('حقوق الطبع والنشر © 2024'),
               ]),
         ));
+  }
+
+  bool isInstallPromptAvailable() {
+    print(js.context.callMethod('isInstallPromptAvailable'));
+    return js.context.callMethod('isInstallPromptAvailable') as bool;
+    // return false;
   }
 
   void intentFunWhatsapp() async {
