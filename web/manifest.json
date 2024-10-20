@@ -1,6 +1,6 @@
 {
-    "name": "gl1",
-    "short_name": "gl1",
+    "name": "مطعم الارض الخضراء",
+    "short_name": "الارض الخضراء",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
