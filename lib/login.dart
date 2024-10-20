@@ -11,6 +11,7 @@ import 'package:gl1/shared/urls.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:html' as html;
+import 'dart:js' as js;
 
 class LoginPage extends StatelessWidget {
   final TextEditingController phoneController = TextEditingController();
@@ -215,7 +216,8 @@ class LoginPage extends StatelessWidget {
 
                 ElevatedButton(
                     onPressed: () {
-                      PwaHelper.initPwa();
+                      // PwaHelper.initPwa();
+                      js.context.callMethod('showInstallPrompt');
                     },
                     child: Text("data")),
                 const SizedBox(height: 200),

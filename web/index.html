@@ -31,7 +31,41 @@
 
     <title>مطعم الارض الخضراء</title>
     <link rel="manifest" href="manifest.json" />
-    
+    <script>
+      let deferredPrompt;
+
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+      });
+
+      function showInstallPrompt() {
+        // if (deferredPrompt) {
+        //   deferredPrompt.prompt();
+        //   deferredPrompt.userChoice.then((choiceResult) => {
+        //     deferredPrompt = null;
+        //     // Handle user response
+        //   });
+        // }
+        console.log("mustafaf");
+        if (deferredPrompt) {
+         
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then((choiceResult) => {
+           
+            
+            if (choiceResult.outcome === "accepted") {
+              alert("Thanks for installing our app!");
+            } else {
+              alert("Installation was dismissed.");
+            }
+            deferredPrompt = null;
+          });
+        } else {
+          alert("No installation prompt available.");
+        }
+      }
+    </script>
   </head>
   <body>
     <script src="flutter_bootstrap.js" async></script>
