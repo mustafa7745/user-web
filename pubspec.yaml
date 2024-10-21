@@ -43,6 +43,8 @@ dependencies:
   # pointycastle: ^3.9.1
   # encrypt: ^5.0.3
   provider: ^6.1.2
+  intl: ^0.19.0
+  json_serializable: ^6.8.0
   # pwa_install: ^0.0.5
   # encrypt: ^5.0.3
 

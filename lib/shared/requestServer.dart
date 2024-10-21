@@ -79,6 +79,10 @@ class Requestserver {
     }
   }
 
+  Map<String, String> getData2Token() {
+    return {"inputLoginToken": getLogined().token};
+  }
+
   bool isJson(String data) {
     try {
       json.decode(data);
