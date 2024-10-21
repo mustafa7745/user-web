@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:gl1/models/userModel.dart';
 import 'package:intl/intl.dart';
 import 'package:localstorage/localstorage.dart';
 
@@ -62,12 +63,6 @@ class UserStorage {
 }
 
 // User model classes (replace with your actual implementations)
-class User {
-  // Add your User properties and methods here
-  User.fromJson(Map<String, dynamic> json) {
-    // Parse JSON
-  }
-}
 
 class UserLocationModel {
   // Add your UserLocationModel properties and methods here
