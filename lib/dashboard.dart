@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gl1/models/homeComponent.dart';
 import 'package:gl1/models/userModel.dart';
+import 'package:gl1/shared/imageWidget.dart';
 import 'package:gl1/shared/mainCompose.dart';
 import 'package:gl1/shared/requestServer.dart';
 import 'package:gl1/shared/stateController.dart';
@@ -55,82 +56,163 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   mainContent() {
-    final String proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    final String imageUrl =
-        'https://greenland-rest.com/v1/include/images/categories/52897402766f279af1abdd.jpg';
+    // final String proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    // final String imageUrl =
+    //     'https://greenland-rest.com/v1/include/images/categories/52897402766f279af1abdd.jpg';
 
-    final String fullUrl = proxyUrl + imageUrl;
+    // final String fullUrl = proxyUrl + imageUrl;
     return Padding(
-        padding: EdgeInsets.all(16.0),
-        child: ListView.builder(
-            itemCount: (homeComponent.categories.length / 2).ceil(),
-            itemBuilder: (context, index) {
-              return Row(
-                mainAxisAlignment:
-                    MainAxisAlignment.spaceAround, // Space items evenly
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(8.0),
-                      child: Card(
-                        child: Center(
-                            child: Column(
-                          children: [
-                            CachedNetworkImage(
-                              imageUrl: homeComponent
-                                      .categories[index * 2].categoryImagePath +
-                                  homeComponent.categories[index * 2].image,
-                              placeholder: (context, url) =>
-                                  CircularProgressIndicator(),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
-                              fit: BoxFit.cover,
-                              height: 200,
-                              width: 200,
-                            ),
-                            Text(homeComponent.categories[index * 2].name),
-                          ],
-                        )),
-                      ),
+      padding: EdgeInsets.all(16.0),
+      child: ListView.builder(
+        itemCount:
+            (homeComponent.categories.length / 2).ceil(), // Two items per row
+        itemBuilder: (context, index) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              // First item
+              Expanded(
+                child: Container(
+                  // padding: EdgeInsets.all(8.0),
+                  margin: EdgeInsets.all(5.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white, // Background color
+                    borderRadius:
+                        BorderRadius.circular(12.0), // Rounded corners
+                    border: Border.all(
+                        color: Colors.grey, width: 1), // Border color and width
+                  ),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(
+                                12.0), // Rounded top-left corner
+                            topRight: Radius.circular(
+                                12.0), // Rounded top-right corner
+                          ),
+                          child: CachedNetworkImage(
+                            height: 140,
+                            width: double.infinity,
+                            fit: BoxFit.fill,
+                            imageUrl: homeComponent
+                                    .categories[index * 2].categoryImagePath +
+                                homeComponent.categories[index * 2].image,
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(), // Loading indicator
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error), // Error widget
+                          ),
+                        ),
+                        Text(homeComponent.categories[index * 2].name),
+                      ],
                     ),
                   ),
-                  if (index * 2 + 1 <
-                      homeComponent
-                          .categories.length) // Check for the second item
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.all(8.0),
-                        child: Card(
-                          child: Center(
-                              child: Column(
-                            children: [
-                              CachedNetworkImage(
+                ),
+              ),
+              // Second item
+              if (index * 2 + 1 <
+                  homeComponent
+                      .categories.length) // Check if the second item exists
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              homeComponent.categories[index * 2 + 1].name),
+                          duration: const Duration(seconds: 2),
+                          behavior: SnackBarBehavior.floating,
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    },
+                    child: Container(
+                      // padding: EdgeInsets.all(8.0),
+                      margin: EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white, // Background color
+                        borderRadius:
+                            BorderRadius.circular(12.0), // Rounded corners
+                        border: Border.all(
+                            color: Colors.grey,
+                            width: 1), // Border color and width
+                      ),
+                      child: Center(
+                        child: Column(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(
+                                    12.0), // Rounded top-left corner
+                                topRight: Radius.circular(
+                                    12.0), // Rounded top-right corner
+                              ),
+                              child: CachedNetworkImage(
+                                height: 140,
+                                width: double.infinity,
+                                fit: BoxFit.fill,
                                 imageUrl: homeComponent
                                         .categories[index * 2 + 1]
                                         .categoryImagePath +
                                     homeComponent
                                         .categories[index * 2 + 1].image,
                                 placeholder: (context, url) =>
-                                    CircularProgressIndicator(),
+                                    CircularProgressIndicator(), // Loading indicator
                                 errorWidget: (context, url, error) =>
-                                    Icon(Icons.error),
-                                fit: BoxFit.cover,
-                                height: 200,
-                                width: 200,
+                                    Icon(Icons.error), // Error widget
                               ),
-                              Text(
-                                  homeComponent.categories[index * 2 + 1].name),
-                            ],
-                          )),
+                            ),
+                            Text(homeComponent.categories[index * 2 + 1].name),
+                          ],
                         ),
                       ),
                     ),
-                ],
-              );
-              // return ListTile(
-              //   title: Text(homeComponent.categories[index].name),
-              // );
-            }));
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
+    );
+    // return Padding(
+    //     padding: EdgeInsets.all(16.0),
+    //     child: ListView.builder(
+    //       itemCount: homeComponent.categories.length,
+    //       itemBuilder: (context, index) {
+    //         return Row(
+    //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+    //           children: [
+    //             // First item
+    //             Expanded(
+    //               child: Container(
+    //                 padding: EdgeInsets.all(8.0),
+    //                 child: Center(
+    //                   child: Column(
+    //                     children: [
+    //                       SizedBox(
+    //                           height: 120,
+    //                           width: 120,
+    //                           child: CachedNetworkImage(
+    //                               imageUrl: homeComponent
+    //                                       .categories[index].categoryImagePath +
+    //                                   homeComponent
+    //                                       .categories[index + 1].image)),
+    //                       Text(homeComponent.categories[index].name),
+    //                     ],
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //           ],
+    //         );
+    //       },
+    //     ));
+
+    // return ListTile(
+    //   title: Text(homeComponent.categories[index].name),
+    // );
   }
 
   Future<void> sendPostRequestGetHome() async {
@@ -181,4 +263,12 @@ class _DashboardPageState extends State<DashboardPage> {
       },
     );
   }
+}
+
+HtmlImageWidget htmlWidget(imageUrl) {
+  return HtmlImageWidget(
+    imageUrl: imageUrl,
+    height: "100%",
+    width: "100%",
+  );
 }
