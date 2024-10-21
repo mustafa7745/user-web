@@ -11,29 +11,62 @@ class DeviceInfo {
   DeviceInfo(this.context);
 
   Future<String> getOSVersion() async {
+    // DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    // String osVersion = '';
+
+    // try {
+    //   if (Theme.of(context).platform == TargetPlatform.android) {
+    //     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    //     osVersion = 'Android ${androidInfo.version.release}';
+    //   } else if (Theme.of(context).platform == TargetPlatform.iOS) {
+    //     IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+    //     osVersion = 'iOS ${iosInfo.systemVersion}';
+    //   } else if (Theme.of(context).platform == TargetPlatform.windows) {
+    //     // WindowsDeviceInfo windowsInfo = await deviceInfo.windowsInfo;
+    //     osVersion = 'Windows';
+    //   } else if (Theme.of(context).platform == TargetPlatform.macOS) {
+    //     // MacOsDeviceInfo macInfo = await deviceInfo.macOsInfo;
+    //     osVersion = 'macOS';
+    //   } else if (Theme.of(context).platform == TargetPlatform.linux) {
+    //     LinuxDeviceInfo linuxInfo = await deviceInfo.linuxInfo;
+    //     osVersion = 'Linux ${linuxInfo.version}';
+    //   } else {
+    //     osVersion = 'Unknown OS';
+    //   }
+    // } catch (e) {
+    //   osVersion = 'Error retrieving OS version: $e';
+    // }
+
+    // return osVersion;
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     String osVersion = '';
 
     try {
       if (Theme.of(context).platform == TargetPlatform.android) {
         AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-        osVersion = 'Android ${androidInfo.version.release}';
+        osVersion =
+            'Model ${androidInfo.model} Brand ${androidInfo.brand} version ${androidInfo.version.release}';
       } else if (Theme.of(context).platform == TargetPlatform.iOS) {
         IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-        osVersion = 'iOS ${iosInfo.systemVersion}';
+        osVersion =
+            'Model ${iosInfo.name} name ${iosInfo.name}|${iosInfo.systemName} version ${iosInfo.systemVersion}';
       } else if (Theme.of(context).platform == TargetPlatform.windows) {
-        // WindowsDeviceInfo windowsInfo = await deviceInfo.windowsInfo;
         osVersion = 'Windows';
+        // WindowsDeviceInfo windowsInfo = await deviceInfo.windowsInfo;
+        // osVersion =
+        //     'name ${windowsInfo.productName} version ${windowsInfo.displayVersion}';
       } else if (Theme.of(context).platform == TargetPlatform.macOS) {
         // MacOsDeviceInfo macInfo = await deviceInfo.macOsInfo;
-        osVersion = 'macOS';
+        osVersion = 'macOS..';
       } else if (Theme.of(context).platform == TargetPlatform.linux) {
-        LinuxDeviceInfo linuxInfo = await deviceInfo.linuxInfo;
-        osVersion = 'Linux ${linuxInfo.version}';
+        // LinuxDeviceInfo linuxInfo = await deviceInfo.linuxInfo;
+        osVersion = 'Linux ..';
       } else {
-        osVersion = 'Unknown OS';
+        osVersion = 'Unknown Info';
       }
     } catch (e) {
+      // final webInfo = (await deviceInfo.webBrowserInfo);
+      // final inf = 'Name ${webInfo.browserName} version ${webInfo.appVersion}';
       osVersion = 'Error retrieving OS version: $e';
     }
 
@@ -70,8 +103,42 @@ class DeviceInfo {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     final info = (await deviceInfo.webBrowserInfo);
     final name = info.browserName;
-    return "${name.name}|${extractBrowserInfo(info.userAgent.toString())}";
+    // return "${name.name}|${extractBrowserInfo(info.userAgent.toString())}";
+    return "${name.name}";
+
+    // return "name ${name.name}| version ${info.v}";
+
+    // DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    // String osVersion = '';
+
+    // try {
+    //   if (Theme.of(context).platform == TargetPlatform.android) {
+    //     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    //     osVersion =
+    //         'Model ${androidInfo.model} Brand ${androidInfo.brand} version ${androidInfo.version.release}';
+    //   } else if (Theme.of(context).platform == TargetPlatform.iOS) {
+    //     IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+    //     osVersion =
+    //         'Model ${iosInfo.name} name ${iosInfo.name}|${iosInfo.systemName} version ${iosInfo.systemVersion}';
+    //   } else if (Theme.of(context).platform == TargetPlatform.windows) {
+    //     // WindowsDeviceInfo windowsInfo = await deviceInfo.windowsInfo;
+    //     osVersion = 'Windows..';
+    //   } else if (Theme.of(context).platform == TargetPlatform.macOS) {
+    //     // MacOsDeviceInfo macInfo = await deviceInfo.macOsInfo;
+    //     osVersion = 'macOS..';
+    //   } else if (Theme.of(context).platform == TargetPlatform.linux) {
+    //     // LinuxDeviceInfo linuxInfo = await deviceInfo.linuxInfo;
+    //     osVersion = 'Linux ..';
+    //   } else {
+    //     osVersion = 'Unknown Info';
+    //   }
+    // } catch (e) {
+    //   // final webInfo = (await deviceInfo.webBrowserInfo);
+    //   // final inf = 'Name ${webInfo.browserName} version ${webInfo.appVersion}';
+    //   osVersion = '${inf}|Error retrieving OS version: $e';
   }
+
+  // return osVersion;
 
   String getBrowserVersion() {
     final userAgent = window.navigator.userAgent;
@@ -115,10 +182,9 @@ class DeviceInfo {
   Future<Map<String, String>> getJsonString() async {
     final browserInfo = await getBrowserName();
     // print(browserInfo);
-    final data = {
-      'deviceInfo': await getOSVersion(),
-      'browserInfo': browserInfo
-    };
+    final deviceInfo = await getOSVersion();
+    print(deviceInfo);
+    final data = {'deviceInfo': deviceInfo, 'browserInfo': browserInfo};
 
     return data;
     // jsonEncode(data);
