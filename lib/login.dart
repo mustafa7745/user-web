@@ -13,18 +13,35 @@ import 'package:url_launcher/url_launcher.dart';
 import 'dart:html' as html;
 import 'dart:js' as js;
 
-class LoginPage extends StatelessWidget {
-  final pageName = "login";
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final Requestserver requestserver = Requestserver();
-  // final ValueNotifier<bool> _isValidPhone = ValueNotifier<bool>(true);
+class LoginPage extends StatefulWidget {
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
 
+class _LoginPageState extends State<LoginPage> {
+  final pageName = "login";
+
+  final TextEditingController phoneController = TextEditingController();
+
+  final TextEditingController passwordController = TextEditingController();
+
+  final Requestserver requestserver = Requestserver();
+
+  // final ValueNotifier<bool> _isValidPhone = ValueNotifier<bool>(true);
   late StateController stateController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Call sendPostRequestInit after the widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      stateController.setPage(pageName);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     stateController = Provider.of<StateController>(context);
-    stateController.setPage(pageName);
 
     return Scaffold(
         body: MainCompose(
