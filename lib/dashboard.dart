@@ -114,30 +114,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       if (homeComponent.user!.name2 == null)
                         InkWell(
                           onTap: () async {
-                            //                        Navigator.pushAndRemoveUntil(
-                            //   navigatorKey.currentContext!,
-                            //   MaterialPageRoute(builder: (context) => UpdateNamePage()),
-                            //   (Route<dynamic> route) => false,
-                            // );
-
-                            final result = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => UpdateNamePage()),
-                            );
-                            // stateController.setPage(pageName);
-
-                            // Show the returned value
-                            if (result != null) {
-                              // print(result);
-                              final user = User.fromJson(jsonDecode(result));
-                              userStorage.setUser(result);
-                              homeComponent.user = user;
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                stateController.setPage(pageName);
-                                stateController.update();
-                              });
-                            }
+                            await goToAddName();
                           },
                           child: Text(
                             "لم يتم تعيين الاسم بعد , تعيين الان",
@@ -232,13 +209,33 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  Future<void> goToAddName() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => UpdateNamePage()),
+    );
+
+    // Show the returned value
+    if (result != null) {
+      // print(result);
+      final user = User.fromJson(jsonDecode(result));
+      userStorage.setUser(result);
+      homeComponent.user = user;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        stateController.setPage(pageName);
+        stateController.update();
+        toast("تمت الاضافة بنجاح");
+      });
+    }
+  }
+
   toast(text) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(text),
         duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.green,
       ),
     );
   }
@@ -318,7 +315,7 @@ class _DashboardPageState extends State<DashboardPage> {
       onFail: (code, fail) {
         stateController.errorStateRead(fail);
       },
-      onSuccess: (data) {
+      onSuccess: (data) async {
         // requestserver.setLogined(data);
         HomeComponent homeComponent1 =
             HomeComponent.fromJson(json.decode(data));
@@ -332,20 +329,10 @@ class _DashboardPageState extends State<DashboardPage> {
         print(homeComponent.user?.name.toString());
         // print(homeComponent.categories.first.);
         stateController.successState();
-        // Navigator.pushAndRemoveUntil(
-        //   navigatorKey.currentContext!,
-        //   MaterialPageRoute(builder: (context) => DashboardPage()),
-        //   (Route<dynamic> route) => false,
-        // );
+        if (homeComponent1.user!.name2 == null) {
+          await goToAddName();
+        }
       },
     );
   }
-}
-
-HtmlImageWidget htmlWidget(imageUrl) {
-  return HtmlImageWidget(
-    imageUrl: imageUrl,
-    height: "100%",
-    width: "100%",
-  );
 }
