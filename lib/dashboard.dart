@@ -93,11 +93,12 @@ class _DashboardPageState extends State<DashboardPage> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(5.0),
-                            child: SvgPicture.asset(
-                              'images/user.svg', // Path to your SVG file
-                              width: 24,
-                              height: 24,
-                            ),
+                            child: Icon(Icons.person, size: 30),
+                            // child: SvgPicture.asset(
+                            //   'images/user.svg', // Path to your SVG file
+                            //   width: 24,
+                            //   height: 24,
+                            // ),
                           ),
                           Text(
                               "مرحبا بك: ${homeComponent.user!.name2 ?? homeComponent.user!.name}"),
