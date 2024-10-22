@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gl1/models/categoryModel.dart';
 import 'package:gl1/models/homeComponent.dart';
 import 'package:gl1/models/userModel.dart';
 import 'package:gl1/shared/imageWidget.dart';
@@ -63,156 +65,201 @@ class _DashboardPageState extends State<DashboardPage> {
     // final String fullUrl = proxyUrl + imageUrl;
     return Padding(
       padding: EdgeInsets.all(16.0),
-      child: ListView.builder(
-        itemCount:
-            (homeComponent.categories.length / 2).ceil(), // Two items per row
-        itemBuilder: (context, index) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              // First item
-              Expanded(
+      child: Column(
+        children: [
+          if (homeComponent.user != null)
+            // homeComponent.user!.name2 == null ?
+            SizedBox(
+              width: double.infinity,
+              child: Directionality(
+                textDirection: TextDirection.rtl,
                 child: Container(
-                  // padding: EdgeInsets.all(8.0),
-                  margin: EdgeInsets.all(5.0),
                   decoration: BoxDecoration(
                     color: Colors.white, // Background color
-                    borderRadius:
-                        BorderRadius.circular(12.0), // Rounded corners
+
+                    borderRadius: BorderRadius.only(
+                      bottomLeft:
+                          Radius.circular(12.0), // Rounded top-left corner
+                      bottomRight:
+                          Radius.circular(12.0), // Rounded top-right corner
+                    ),
                     border: Border.all(
                         color: Colors.grey, width: 1), // Border color and width
                   ),
-                  child: Center(
-                    child: Column(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(
-                                12.0), // Rounded top-left corner
-                            topRight: Radius.circular(
-                                12.0), // Rounded top-right corner
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: SvgPicture.asset(
+                              'images/user.svg', // Path to your SVG file
+                              width: 24,
+                              height: 24,
+                            ),
                           ),
-                          child: CachedNetworkImage(
-                            height: 140,
-                            width: double.infinity,
-                            fit: BoxFit.fill,
-                            imageUrl: homeComponent
-                                    .categories[index * 2].categoryImagePath +
-                                homeComponent.categories[index * 2].image,
-                            placeholder: (context, url) =>
-                                CircularProgressIndicator(), // Loading indicator
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error), // Error widget
+                          Text(
+                              "مرحبا بك: ${homeComponent.user!.name2 ?? homeComponent.user!.name}"),
+                        ],
+                      ),
+                      if (homeComponent.user!.name2 == null)
+                        InkWell(
+                          onTap: () {
+                            toast("name");
+                          },
+                          child: Text(
+                            "تعيين الاسم الان",
+                            style: const TextStyle(
+                                color: Colors.blue, fontSize: 7),
                           ),
                         ),
-                        Text(homeComponent.categories[index * 2].name),
-                      ],
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 5.0),
+                        child: Divider(
+                          thickness: 2,
+                          color: Colors.blue,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                toast("cart");
+                              },
+                              child: Column(
+                                children: [
+                                  Icon(Icons.shopping_cart, size: 30),
+                                  Text("السلة")
+                                ],
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                toast("orders");
+                              },
+                              child: Column(
+                                children: [
+                                  Icon(Icons.stacked_bar_chart, size: 30),
+                                  Text("الطلبات")
+                                ],
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                toast("search");
+                              },
+                              child: Column(
+                                children: [
+                                  Icon(Icons.search, size: 30),
+                                  Text("البحث")
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
                   ),
                 ),
               ),
-              // Second item
-              if (index * 2 + 1 <
-                  homeComponent
-                      .categories.length) // Check if the second item exists
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              homeComponent.categories[index * 2 + 1].name),
-                          duration: const Duration(seconds: 2),
-                          behavior: SnackBarBehavior.floating,
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    },
-                    child: Container(
-                      // padding: EdgeInsets.all(8.0),
-                      margin: EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white, // Background color
-                        borderRadius:
-                            BorderRadius.circular(12.0), // Rounded corners
-                        border: Border.all(
-                            color: Colors.grey,
-                            width: 1), // Border color and width
-                      ),
-                      child: Center(
-                        child: Column(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(
-                                    12.0), // Rounded top-left corner
-                                topRight: Radius.circular(
-                                    12.0), // Rounded top-right corner
-                              ),
-                              child: CachedNetworkImage(
-                                height: 140,
-                                width: double.infinity,
-                                fit: BoxFit.fill,
-                                imageUrl: homeComponent
-                                        .categories[index * 2 + 1]
-                                        .categoryImagePath +
-                                    homeComponent
-                                        .categories[index * 2 + 1].image,
-                                placeholder: (context, url) =>
-                                    CircularProgressIndicator(), // Loading indicator
-                                errorWidget: (context, url, error) =>
-                                    Icon(Icons.error), // Error widget
-                              ),
-                            ),
-                            Text(homeComponent.categories[index * 2 + 1].name),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          );
-        },
+            ),
+
+          // Text("مرحبا بك: " + homeComponent.user!.name2.toString()),
+          Expanded(
+            child: Container(
+              // height: double.infinity,
+              child: ListView.builder(
+                itemCount: (homeComponent.categories.length / 2)
+                    .ceil(), // Two items per row
+                itemBuilder: (context, index) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      // First item
+                      _buildCategoryItem(
+                          context, homeComponent.categories[index * 2]),
+
+                      // Second item
+
+                      if (index * 2 + 1 <
+                          homeComponent.categories
+                              .length) // Check if the second item exists
+                        _buildCategoryItem(
+                            context, homeComponent.categories[index * 2 + 1])
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
-    // return Padding(
-    //     padding: EdgeInsets.all(16.0),
-    //     child: ListView.builder(
-    //       itemCount: homeComponent.categories.length,
-    //       itemBuilder: (context, index) {
-    //         return Row(
-    //           mainAxisAlignment: MainAxisAlignment.spaceAround,
-    //           children: [
-    //             // First item
-    //             Expanded(
-    //               child: Container(
-    //                 padding: EdgeInsets.all(8.0),
-    //                 child: Center(
-    //                   child: Column(
-    //                     children: [
-    //                       SizedBox(
-    //                           height: 120,
-    //                           width: 120,
-    //                           child: CachedNetworkImage(
-    //                               imageUrl: homeComponent
-    //                                       .categories[index].categoryImagePath +
-    //                                   homeComponent
-    //                                       .categories[index + 1].image)),
-    //                       Text(homeComponent.categories[index].name),
-    //                     ],
-    //                   ),
-    //                 ),
-    //               ),
-    //             ),
-    //           ],
-    //         );
-    //       },
-    //     ));
+  }
 
-    // return ListTile(
-    //   title: Text(homeComponent.categories[index].name),
-    // );
+  toast(text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  // Widget for building category items
+  Widget _buildCategoryItem(BuildContext context, CategoryModel category) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(category.name),
+              duration: const Duration(seconds: 2),
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.red,
+            ),
+          );
+        },
+        child: Container(
+          margin: EdgeInsets.all(5.0),
+          decoration: BoxDecoration(
+            color: Colors.white, // Background color
+            borderRadius: BorderRadius.circular(12.0), // Rounded corners
+            border: Border.all(
+                color: Colors.grey, width: 1), // Border color and width
+          ),
+          child: Center(
+            child: Column(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12.0), // Rounded top-left corner
+                    topRight: Radius.circular(12.0), // Rounded top-right corner
+                  ),
+                  child: CachedNetworkImage(
+                    height: 140,
+                    width: double.infinity,
+                    fit: BoxFit.fill,
+                    imageUrl: category.categoryImagePath + category.image,
+                    placeholder: (context, url) =>
+                        CircularProgressIndicator(), // Loading indicator
+                    errorWidget: (context, url, error) =>
+                        Icon(Icons.error), // Error widget
+                  ),
+                ),
+                Text(category.name),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> sendPostRequestGetHome() async {
