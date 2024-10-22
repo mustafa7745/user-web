@@ -7,6 +7,7 @@ import 'package:gl1/main.dart';
 import 'package:gl1/models/categoryModel.dart';
 import 'package:gl1/models/homeComponent.dart';
 import 'package:gl1/models/userModel.dart';
+import 'package:gl1/orders.dart';
 import 'package:gl1/shared/imageWidget.dart';
 import 'package:gl1/shared/mainCompose.dart';
 import 'package:gl1/shared/requestServer.dart';
@@ -134,37 +135,43 @@ class _DashboardPageState extends State<DashboardPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            InkWell(
-                              onTap: () {
-                                toast("cart");
-                              },
-                              child: Column(
-                                children: [
-                                  Icon(Icons.shopping_cart, size: 30),
-                                  Text("السلة")
-                                ],
+                            Expanded(
+                              child: InkWell(
+                                onTap: () {
+                                  toast("cart");
+                                },
+                                child: Column(
+                                  children: [
+                                    Icon(Icons.shopping_cart, size: 30),
+                                    Text("السلة")
+                                  ],
+                                ),
                               ),
                             ),
-                            InkWell(
-                              onTap: () {
-                                toast("orders");
-                              },
-                              child: Column(
-                                children: [
-                                  Icon(Icons.stacked_bar_chart, size: 30),
-                                  Text("الطلبات")
-                                ],
+                            Expanded(
+                              child: InkWell(
+                                onTap: () {
+                                  goToOrders();
+                                },
+                                child: Column(
+                                  children: [
+                                    Icon(Icons.stacked_bar_chart, size: 30),
+                                    Text("الطلبات")
+                                  ],
+                                ),
                               ),
                             ),
-                            InkWell(
-                              onTap: () {
-                                toast("search");
-                              },
-                              child: Column(
-                                children: [
-                                  Icon(Icons.search, size: 30),
-                                  Text("البحث")
-                                ],
+                            Expanded(
+                              child: InkWell(
+                                onTap: () {
+                                  toast("search");
+                                },
+                                child: Column(
+                                  children: [
+                                    Icon(Icons.search, size: 30),
+                                    Text("البحث")
+                                  ],
+                                ),
                               ),
                             ),
                           ],
@@ -227,6 +234,13 @@ class _DashboardPageState extends State<DashboardPage> {
         toast("تمت الاضافة بنجاح");
       });
     }
+  }
+
+  goToOrders() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => OrdersPage()),
+    );
   }
 
   toast(text) {
