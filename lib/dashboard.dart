@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gl1/main.dart';
 import 'package:gl1/models/categoryModel.dart';
 import 'package:gl1/models/homeComponent.dart';
 import 'package:gl1/models/userModel.dart';
@@ -12,6 +13,7 @@ import 'package:gl1/shared/requestServer.dart';
 import 'package:gl1/shared/stateController.dart';
 import 'package:gl1/shared/urls.dart';
 import 'package:gl1/storage/userStorage.dart';
+import 'package:gl1/updateName.dart';
 import 'package:provider/provider.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -20,6 +22,7 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  final pageName = "dashboard";
   final TextEditingController phoneController = TextEditingController();
 
   final TextEditingController passwordController = TextEditingController();
@@ -31,12 +34,14 @@ class _DashboardPageState extends State<DashboardPage> {
   // final ValueNotifier<bool> _isValidPhone = ValueNotifier<bool>(true);
   late StateController stateController;
   var isInitalHomeComponent = false;
+  UserStorage userStorage = UserStorage();
 
   @override
   void initState() {
     super.initState();
     // Call sendPostRequestInit after the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      stateController.setPage(pageName);
       sendPostRequestGetHome();
     });
   }
@@ -44,8 +49,10 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     stateController = Provider.of<StateController>(context);
+
     return Scaffold(
         body: MainCompose(
+            page: pageName,
             padding: 10,
             stateController: stateController,
             onRead: sendPostRequestGetHome,
@@ -106,11 +113,34 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                       if (homeComponent.user!.name2 == null)
                         InkWell(
-                          onTap: () {
-                            toast("name");
+                          onTap: () async {
+                            //                        Navigator.pushAndRemoveUntil(
+                            //   navigatorKey.currentContext!,
+                            //   MaterialPageRoute(builder: (context) => UpdateNamePage()),
+                            //   (Route<dynamic> route) => false,
+                            // );
+
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => UpdateNamePage()),
+                            );
+                            // stateController.setPage(pageName);
+
+                            // Show the returned value
+                            if (result != null) {
+                              // print(result);
+                              final user = User.fromJson(jsonDecode(result));
+                              userStorage.setUser(result);
+                              homeComponent.user = user;
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                stateController.setPage(pageName);
+                                stateController.update();
+                              });
+                            }
                           },
                           child: Text(
-                            "تعيين الاسم الان",
+                            "لم يتم تعيين الاسم بعد , تعيين الان",
                             style: const TextStyle(
                                 color: Colors.blue, fontSize: 7),
                           ),
@@ -264,7 +294,6 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future<void> sendPostRequestGetHome() async {
-    UserStorage userStorage = UserStorage();
     const String url = '${Urls.root}home/';
 
     stateController.startRead();

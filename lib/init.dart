@@ -15,6 +15,7 @@ class InitPage extends StatefulWidget {
 }
 
 class _InitPageState extends State<InitPage> {
+  final pageName = "init";
   final Requestserver requestserver = Requestserver();
   late StateController stateController;
 
@@ -23,6 +24,7 @@ class _InitPageState extends State<InitPage> {
     super.initState();
     // Call sendPostRequestInit after the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      stateController.setPage(pageName);
       sendPostRequestInit();
     });
   }
@@ -33,6 +35,7 @@ class _InitPageState extends State<InitPage> {
 
     return Scaffold(
       body: MainCompose(
+        page: pageName,
         padding: 10,
         stateController: stateController,
         content: () {

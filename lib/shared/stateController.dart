@@ -12,6 +12,7 @@ class StateController extends ChangeNotifier {
   bool _isLoadingAUD = false;
   bool _isErrorAUD = false;
   String _errorAUD = "";
+  String _page = "";
 
   // Getters for the read state
   bool get isLoadingRead => _isLoadingRead;
@@ -24,6 +25,7 @@ class StateController extends ChangeNotifier {
   bool get isErrorAUD => _isErrorAUD;
   String get errorAUD => _errorAUD;
 
+  String get page => _page;
   // Start read process
   void startRead() {
     _isErrorRead = false;
@@ -88,6 +90,15 @@ class StateController extends ChangeNotifier {
 
   void updatePassword(value) {
     password = value;
+    notifyListeners();
+  }
+
+  setPage(value) {
+    _page = value;
+    notifyListeners();
+  }
+
+  update() {
     notifyListeners();
   }
 }

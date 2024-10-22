@@ -6,19 +6,21 @@ class MainCompose extends StatelessWidget {
   final StateController stateController;
   final Widget Function() content;
   final Future<void> Function()? onRead;
+  final String page;
 
   MainCompose({
     required this.padding,
     required this.stateController,
     required this.content,
     this.onRead,
+    required this.page,
   });
 
   @override
   Widget build(BuildContext context) {
     // Check if there's an error and show a SnackBar if so
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (stateController.isErrorAUD) {
+      if (stateController.isErrorAUD && page == stateController.page) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(stateController.errorAUD),
@@ -29,7 +31,7 @@ class MainCompose extends StatelessWidget {
         );
         stateController.resetIsErrorAud();
       }
-      if (stateController.isLoadingAUD) {
+      if (stateController.isLoadingAUD && page == stateController.page) {
         // Show dialog when loading state changes
         Future.microtask(() {
           showDialog(
@@ -51,6 +53,7 @@ class MainCompose extends StatelessWidget {
         });
       }
     });
+
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   print("object");
     //   print(stateController.isLoadingAUD);
@@ -63,11 +66,11 @@ class MainCompose extends StatelessWidget {
       children: [
         SizedBox(height: padding), // Top padding
 
-        if (stateController.isLoadingRead)
+        if (stateController.isLoadingRead && page == stateController.page)
           const Center(
             child: CircularProgressIndicator(),
           )
-        else if (stateController.isErrorRead)
+        else if (stateController.isErrorRead && page == stateController.page)
           Center(
             child: Column(
               children: [

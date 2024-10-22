@@ -14,6 +14,7 @@ import 'dart:html' as html;
 import 'dart:js' as js;
 
 class LoginPage extends StatelessWidget {
+  final pageName = "login";
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final Requestserver requestserver = Requestserver();
@@ -23,8 +24,11 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     stateController = Provider.of<StateController>(context);
+    stateController.setPage(pageName);
+
     return Scaffold(
         body: MainCompose(
+            page: pageName,
             padding: 10,
             stateController: stateController,
             content: () {
