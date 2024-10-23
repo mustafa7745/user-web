@@ -2,7 +2,10 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:gl1/login.dart';
 import 'package:gl1/main.dart';
+import 'package:gl1/main2.dart';
 import 'package:gl1/shared/deviceInfo.dart';
 import 'package:gl1/shared/tokeny.dart';
 import 'package:http/http.dart' as http;
@@ -55,9 +58,12 @@ class Requestserver {
           break;
         case 400:
           if (isJson(data)) {
-            final error = ErrorMessage.fromJson(json.decode(data));
-            // handleErrorResponse(error);
-            onFail(error.code, error.message.ar);
+            // final error = ErrorMessage.fromJson(json.decode(data));
+            handleErrorResponse(
+              data,
+              onFail,
+            );
+            // onFail(error.code, error.message.ar);
           } else {
             onFail(response.statusCode, "not json E");
           }
@@ -119,6 +125,10 @@ class Requestserver {
     localStorage.setItem("2", base64Encode(bytes));
   }
 
+  clearLogined() {
+    localStorage.removeItem("2");
+  }
+
   TokenResult getLogined() {
     String? logined = localStorage.getItem("2");
     // Parse JSON string to Map
@@ -129,6 +139,38 @@ class Requestserver {
     // Create TokenResult object
     TokenResult result = TokenResult.fromJson(jsonMap);
     return result;
+  }
+
+  void handleErrorResponse(
+    String data,
+    Function(int code, String fail) onFail,
+  ) {
+    // final ErrorMessage errorMessage = MyJson.ignoreUnknownKeys.decode<ErrorMessage>(data);
+    final errorMessage = ErrorMessage.fromJson(json.decode(data));
+
+    switch (errorMessage.code) {
+      case 5001:
+        // Navigate to MainActivity with refresh token
+        Navigator.of(navigatorKey.currentContext!).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => Main2Page()),
+          (route) => false,
+        );
+        // Optionally, you can send the refreshToken as an argument if needed.
+        break;
+
+      case 5002:
+        // Clear login token and navigate to MainActivity
+        clearLogined();
+        Navigator.of(navigatorKey.currentContext!).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => LoginPage()),
+          (route) => false,
+        );
+        break;
+
+      default:
+        onFail(errorMessage.code, errorMessage.message.ar);
+        break;
+    }
   }
 }
 
