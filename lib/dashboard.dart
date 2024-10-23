@@ -57,7 +57,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return Scaffold(
         body: MainCompose(
             page: pageName,
-            padding: 10,
+            padding: 0,
             stateController: stateController,
             onRead: sendPostRequestGetHome,
             content: () {
@@ -69,150 +69,148 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   mainContent() {
-    // final String proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    // final String imageUrl =
-    //     'https://greenland-rest.com/v1/include/images/categories/52897402766f279af1abdd.jpg';
+    final screenHeight = MediaQuery.of(context).size.height;
 
-    // final String fullUrl = proxyUrl + imageUrl;
-    return Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          if (homeComponent.user != null)
-            // homeComponent.user!.name2 == null ?
-            SizedBox(
-              width: double.infinity,
-              child: Directionality(
-                textDirection: TextDirection.rtl,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white, // Background color
+    // Calculate the item height based on the screen height
+    // Adjust the number of rows as needed
+    final itemHeight = (screenHeight - AppBar().preferredSize.height - 20) /
+        3; // Assuming 3 rows
 
-                    borderRadius: BorderRadius.only(
-                      bottomLeft:
-                          Radius.circular(12.0), // Rounded top-left corner
-                      bottomRight:
-                          Radius.circular(12.0), // Rounded top-right corner
-                    ),
-                    border: Border.all(
-                        color: Colors.grey, width: 1), // Border color and width
+    return Column(
+      children: [
+        if (homeComponent.user != null)
+          // homeComponent.user!.name2 == null ?
+          SizedBox(
+            width: double.infinity,
+            child: Directionality(
+              textDirection: TextDirection.rtl,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white, // Background color
+
+                  borderRadius: BorderRadius.only(
+                    bottomLeft:
+                        Radius.circular(12.0), // Rounded top-left corner
+                    bottomRight:
+                        Radius.circular(12.0), // Rounded top-right corner
                   ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                  border: Border.all(
+                      color: Colors.grey, width: 1), // Border color and width
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Icon(Icons.person, size: 30),
+                          // child: SvgPicture.asset(
+                          //   'images/user.svg', // Path to your SVG file
+                          //   width: 24,
+                          //   height: 24,
+                          // ),
+                        ),
+                        Text(
+                            "مرحبا بك: ${homeComponent.user!.name2 ?? homeComponent.user!.name}"),
+                      ],
+                    ),
+                    if (homeComponent.user!.name2 == null)
+                      InkWell(
+                        onTap: () async {
+                          await goToAddName();
+                        },
+                        child: Text(
+                          "لم يتم تعيين الاسم بعد , تعيين الان",
+                          style:
+                              const TextStyle(color: Colors.blue, fontSize: 7),
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 5.0),
+                      child: Divider(
+                        thickness: 2,
+                        color: Colors.blue,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Icon(Icons.person, size: 30),
-                            // child: SvgPicture.asset(
-                            //   'images/user.svg', // Path to your SVG file
-                            //   width: 24,
-                            //   height: 24,
-                            // ),
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                toast("cart");
+                              },
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(cartController.products.length
+                                          .toString()),
+                                      Icon(Icons.shopping_cart, size: 30),
+                                    ],
+                                  ),
+                                  Text("السلة")
+                                ],
+                              ),
+                            ),
                           ),
-                          Text(
-                              "مرحبا بك: ${homeComponent.user!.name2 ?? homeComponent.user!.name}"),
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                goToOrders();
+                              },
+                              child: Column(
+                                children: [
+                                  Icon(Icons.stacked_bar_chart, size: 30),
+                                  Text("الطلبات")
+                                ],
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                toast("search");
+                              },
+                              child: Column(
+                                children: [
+                                  Icon(Icons.search, size: 30),
+                                  Text("البحث")
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                      if (homeComponent.user!.name2 == null)
-                        InkWell(
-                          onTap: () async {
-                            await goToAddName();
-                          },
-                          child: Text(
-                            "لم يتم تعيين الاسم بعد , تعيين الان",
-                            style: const TextStyle(
-                                color: Colors.blue, fontSize: 7),
-                          ),
-                        ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 5.0),
-                        child: Divider(
-                          thickness: 2,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Expanded(
-                              child: InkWell(
-                                onTap: () {
-                                  toast("cart");
-                                },
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(cartController.products.length
-                                            .toString()),
-                                        Icon(Icons.shopping_cart, size: 30),
-                                      ],
-                                    ),
-                                    Text("السلة")
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: InkWell(
-                                onTap: () {
-                                  goToOrders();
-                                },
-                                child: Column(
-                                  children: [
-                                    Icon(Icons.stacked_bar_chart, size: 30),
-                                    Text("الطلبات")
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: InkWell(
-                                onTap: () {
-                                  toast("search");
-                                },
-                                child: Column(
-                                  children: [
-                                    Icon(Icons.search, size: 30),
-                                    Text("البحث")
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
+                    )
+                  ],
                 ),
               ),
             ),
-
-          // Text("مرحبا بك: " + homeComponent.user!.name2.toString()),
-          Expanded(
-            child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // Two items per row
-                childAspectRatio: 1, // Adjust as needed for item shape
-                crossAxisSpacing: 10, // Space between columns
-                mainAxisSpacing: 10, // Space between rows
-              ),
-              itemCount: homeComponent.categories.length,
-              itemBuilder: (context, index) {
-                return _buildCategoryItem(
-                    context, homeComponent.categories[index]);
-              },
-            ),
           ),
-        ],
-      ),
+
+        // Text("مرحبا بك: " + homeComponent.user!.name2.toString()),
+        Expanded(
+          child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, // Two items per row
+              childAspectRatio: 0.90, // Adjust as needed for item shape
+              crossAxisSpacing: 10, // Space between columns
+              mainAxisSpacing: 10, // Space between rows
+            ),
+            itemCount: homeComponent.categories.length,
+            itemBuilder: (context, index) {
+              return _buildCategoryItem(
+                  context, homeComponent.categories[index]);
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -290,7 +288,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   topRight: Radius.circular(12.0), // Rounded top-right corner
                 ),
                 child: CachedNetworkImage(
-                  height: 140,
+                  height: 180,
                   width: double.infinity,
                   fit: BoxFit.fill,
                   imageUrl: category.categoryImagePath + category.image,
@@ -300,7 +298,10 @@ class _DashboardPageState extends State<DashboardPage> {
                       Icon(Icons.error), // Error widget
                 ),
               ),
-              Text(category.name),
+              Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Text(category.name),
+              ),
             ],
           ),
         ),
