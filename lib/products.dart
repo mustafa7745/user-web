@@ -455,79 +455,69 @@ void showModalList(BuildContext context, CartController cartController,
     context: context,
     builder: (BuildContext context) {
       return Dialog(
-        child: Container(
-          width: double.infinity,
-          child: GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.75, // Adjust to your liking
-            ),
-            itemCount: modalList.length,
-            itemBuilder: (BuildContext context, int index) {
-              ProductModel product = modalList[index];
-
-              return Card(
-                margin: EdgeInsets.all(5),
-                child: Column(
-                  children: [
-                    // Display product name and price
-                    namePriceModal(product),
-                    Expanded(
-                      child: Container(
-                        width: double.infinity,
-                        child: product.productImages.isEmpty
-                            ? Center(
-                                child: Text("لايوجد صور لهذا الصنف",
-                                    style: TextStyle(fontSize: 8)))
-                            : Expanded(
-                                child: PageView.builder(
-                                  itemCount: product.productImages.length,
-                                  itemBuilder: (context, imgIndex) {
-                                    return CachedNetworkImage(
-                                      height: 140,
-                                      width: double.infinity,
-                                      fit: BoxFit.fill,
-                                      imageUrl:
-                                          product.productImages[imgIndex].image,
-                                      placeholder: (context, url) =>
-                                          LoadingWidget(), // Loading indicator
-                                      errorWidget: (context, url, error) =>
-                                          Icon(Icons.error), // Error widget
-                                    );
-                                  },
-                                ),
-                              ),
-                      ),
-                    ),
-                    Container(
-                      color: Theme.of(context).primaryColor,
-                      width: double.infinity,
-                      child: Column(
-                        children: [
-                          // Availability check
-                          if (product.isAvailable == "0")
-                            Container(
-                              color: Colors.red,
-                              width: double.infinity,
-                              child: Center(
-                                child: Text(
-                                  "تم ايقافه مؤقتا",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 12),
-                                ),
-                              ),
-                            )
-                          else
-                            AddToCartUi(product: product),
-                        ],
-                      ),
-                    ),
-                    Divider(),
-                  ],
-                ),
-              );
-            },
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 0.75, // Adjust to your liking
           ),
+          itemCount: modalList.length,
+          itemBuilder: (BuildContext context, int index) {
+            ProductModel product = modalList[index];
+            return Card(
+              margin: EdgeInsets.all(5),
+              child: Column(
+                children: [
+                  // Display product name and price
+                  namePriceModal(product),
+                  Expanded(
+                    child: product.productImages.isEmpty
+                        ? Center(
+                            child: Text("لايوجد صور لهذا الصنف",
+                                style: TextStyle(fontSize: 8)))
+                        : PageView.builder(
+                            itemCount: product.productImages.length,
+                            itemBuilder: (context, imgIndex) {
+                              return CachedNetworkImage(
+                                width: double.infinity,
+                                fit: BoxFit.fill,
+                                imageUrl: product.productImages[imgIndex].image,
+                                placeholder: (context, url) =>
+                                    LoadingWidget(), // Loading indicator
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error), // Error widget
+                              );
+                            },
+                          ),
+                  ),
+
+                  Container(
+                    color: Theme.of(context).primaryColor,
+                    width: double.infinity,
+                    child: Column(
+                      children: [
+                        // Availability check
+                        if (product.isAvailable == "0")
+                          Container(
+                            color: Colors.red,
+                            width: double.infinity,
+                            child: Center(
+                              child: Text(
+                                "تم ايقافه مؤقتا",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 12),
+                              ),
+                            ),
+                          )
+                        else
+                          AddToCartUi(product: product),
+                      ],
+                    ),
+                  ),
+                  Divider(),
+                ],
+              ),
+            );
+          },
         ),
       );
     },
