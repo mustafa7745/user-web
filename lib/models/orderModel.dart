@@ -50,7 +50,6 @@ class OrderModel {
         return OrderModel.fromJson(item as Map<String, dynamic>);
       }).toList();
 
-      print(orders.length);
       return orders;
     } catch (e) {
       return [];

@@ -46,6 +46,7 @@ dependencies:
   json_serializable: ^6.8.0
   cached_network_image: ^3.4.1
   flutter_svg: ^2.0.10+1
+  shimmer: ^3.0.0
   # pwa_install: ^0.0.5
   # encrypt: ^5.0.3
 

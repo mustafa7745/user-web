@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:gl1/models/productImageModel.dart';
 
 class ProductModel {
@@ -56,5 +58,19 @@ class ProductModel {
       'products_groupsName': productsGroupsName,
       'productImages': productImages.map((image) => image.toJson()).toList(),
     };
+  }
+
+  static List<ProductModel> decodeProducts(String data) {
+    try {
+      final List<dynamic> jsonData = jsonDecode(data);
+
+      // Map the decoded JSON to OrderModel objects
+      List<ProductModel> orders = jsonData.map((item) {
+        return ProductModel.fromJson(item as Map<String, dynamic>);
+      }).toList();
+      return orders;
+    } catch (e) {
+      return [];
+    }
   }
 }

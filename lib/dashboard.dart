@@ -8,11 +8,14 @@ import 'package:gl1/models/categoryModel.dart';
 import 'package:gl1/models/homeComponent.dart';
 import 'package:gl1/models/userModel.dart';
 import 'package:gl1/orders.dart';
+import 'package:gl1/products.dart';
 import 'package:gl1/shared/imageWidget.dart';
+import 'package:gl1/shared/loading.dart';
 import 'package:gl1/shared/mainCompose.dart';
 import 'package:gl1/shared/requestServer.dart';
 import 'package:gl1/shared/stateController.dart';
 import 'package:gl1/shared/urls.dart';
+import 'package:gl1/storage/homeComponentStorage.dart';
 import 'package:gl1/storage/userStorage.dart';
 import 'package:gl1/updateName.dart';
 import 'package:provider/provider.dart';
@@ -141,8 +144,17 @@ class _DashboardPageState extends State<DashboardPage> {
                                   toast("cart");
                                 },
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.shopping_cart, size: 30),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(cartController.products.length
+                                            .toString()),
+                                        Icon(Icons.shopping_cart, size: 30),
+                                      ],
+                                    ),
                                     Text("السلة")
                                   ],
                                 ),
@@ -185,30 +197,18 @@ class _DashboardPageState extends State<DashboardPage> {
 
           // Text("مرحبا بك: " + homeComponent.user!.name2.toString()),
           Expanded(
-            child: Container(
-              // height: double.infinity,
-              child: ListView.builder(
-                itemCount: (homeComponent.categories.length / 2)
-                    .ceil(), // Two items per row
-                itemBuilder: (context, index) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      // First item
-                      _buildCategoryItem(
-                          context, homeComponent.categories[index * 2]),
-
-                      // Second item
-
-                      if (index * 2 + 1 <
-                          homeComponent.categories
-                              .length) // Check if the second item exists
-                        _buildCategoryItem(
-                            context, homeComponent.categories[index * 2 + 1])
-                    ],
-                  );
-                },
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // Two items per row
+                childAspectRatio: 1, // Adjust as needed for item shape
+                crossAxisSpacing: 10, // Space between columns
+                mainAxisSpacing: 10, // Space between rows
               ),
+              itemCount: homeComponent.categories.length,
+              itemBuilder: (context, index) {
+                return _buildCategoryItem(
+                    context, homeComponent.categories[index]);
+              },
             ),
           ),
         ],
@@ -256,48 +256,52 @@ class _DashboardPageState extends State<DashboardPage> {
 
   // Widget for building category items
   Widget _buildCategoryItem(BuildContext context, CategoryModel category) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(category.name),
-              duration: const Duration(seconds: 2),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: Colors.red,
-            ),
-          );
-        },
-        child: Container(
-          margin: EdgeInsets.all(5.0),
-          decoration: BoxDecoration(
-            color: Colors.white, // Background color
-            borderRadius: BorderRadius.circular(12.0), // Rounded corners
-            border: Border.all(
-                color: Colors.grey, width: 1), // Border color and width
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductsPage(categoryId: category.id),
           ),
-          child: Center(
-            child: Column(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(12.0), // Rounded top-left corner
-                    topRight: Radius.circular(12.0), // Rounded top-right corner
-                  ),
-                  child: CachedNetworkImage(
-                    height: 140,
-                    width: double.infinity,
-                    fit: BoxFit.fill,
-                    imageUrl: category.categoryImagePath + category.image,
-                    placeholder: (context, url) =>
-                        CircularProgressIndicator(), // Loading indicator
-                    errorWidget: (context, url, error) =>
-                        Icon(Icons.error), // Error widget
-                  ),
+        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text(category.name),
+        //     duration: const Duration(seconds: 2),
+        //     behavior: SnackBarBehavior.floating,
+        //     backgroundColor: Colors.red,
+        //   ),
+        // );
+      },
+      child: Container(
+        margin: EdgeInsets.all(5.0),
+        decoration: BoxDecoration(
+          color: Colors.white, // Background color
+          borderRadius: BorderRadius.circular(12.0), // Rounded corners
+          border: Border.all(
+              color: Colors.grey, width: 1), // Border color and width
+        ),
+        child: Center(
+          child: Column(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12.0), // Rounded top-left corner
+                  topRight: Radius.circular(12.0), // Rounded top-right corner
                 ),
-                Text(category.name),
-              ],
-            ),
+                child: CachedNetworkImage(
+                  height: 140,
+                  width: double.infinity,
+                  fit: BoxFit.fill,
+                  imageUrl: category.categoryImagePath + category.image,
+                  placeholder: (context, url) =>
+                      LoadingWidget(), // Loading indicator
+                  errorWidget: (context, url, error) =>
+                      Icon(Icons.error), // Error widget
+                ),
+              ),
+              Text(category.name),
+            ],
           ),
         ),
       ),
@@ -305,6 +309,27 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future<void> sendPostRequestGetHome() async {
+    final homeComponentStorage = HomeComponentStorage();
+    // read(homeComponentStorage);
+    if (homeComponentStorage.isSetHomeComponent()) {
+      // final current Date
+      final diff = getCurrentDate().difference(homeComponentStorage.getDate());
+      // print(diff);
+      // print(diff.inMinutes);
+      // print(getCurrentDate());
+      // print(homeComponentStorage.getDate());
+      if (diff.inMinutes > 3) {
+        read(homeComponentStorage);
+      } else {
+        homeComponent = homeComponentStorage.getHomeComponent();
+        isInitalHomeComponent = true;
+      }
+    } else {
+      read(homeComponentStorage);
+    }
+  }
+
+  read(HomeComponentStorage homeComponentStorage) async {
     const String url = '${Urls.root}home/';
 
     stateController.startRead();
@@ -339,10 +364,12 @@ class _DashboardPageState extends State<DashboardPage> {
           homeComponent1.user = userStorage.getUser();
         }
         homeComponent = homeComponent1;
+        homeComponentStorage.setHomeComponent(jsonEncode(homeComponent));
+
         isInitalHomeComponent = true;
-        print(homeComponent.user?.name.toString());
         // print(homeComponent.categories.first.);
         stateController.successState();
+
         if (homeComponent1.user!.name2 == null) {
           await goToAddName();
         }
