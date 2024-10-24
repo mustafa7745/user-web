@@ -23,14 +23,15 @@ class _addUserLocationPageState extends State<addUserLocationPage> {
 
   late StateController stateController;
   late LocationService locationService;
-  final isEnabled = false;
+  var isEnabled = false;
 
   @override
   void initState() {
     super.initState();
     // Call sendPostRequestInit after the widget is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       stateController.setPage(pageName);
+      isEnabled = await locationService.isOpend();
     });
   }
 
