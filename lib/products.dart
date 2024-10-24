@@ -59,8 +59,8 @@ class _ProductsPageState extends State<ProductsPage> {
 
   mainContent() {
     return Padding(
-      padding: EdgeInsets.all(16.0),
-      child: ProductsCompose(products: products, cart: CartController3()),
+      padding: EdgeInsets.all(1.0),
+      child: ProductsCompose(products: products, cart: CartController()),
     );
   }
 
@@ -128,7 +128,7 @@ class _ProductsPageState extends State<ProductsPage> {
 
 class ProductsCompose extends StatelessWidget {
   final List<ProductModel> products;
-  final CartController3 cart;
+  final CartController cart;
 
   ProductsCompose({required this.products, required this.cart});
 
@@ -251,12 +251,6 @@ class ProductsCompose extends StatelessWidget {
 
 final cartController = CartController();
 
-class CartController3 {
-  // Implement your cart controller here
-}
-
-// Your AddToCartUi widget would go here
-
 class AddToCartUi extends StatelessWidget {
   final ProductModel product;
 
@@ -270,6 +264,7 @@ class AddToCartUi extends StatelessWidget {
     ProductInCart? foundItem;
 
     for (var item in cartController.products) {
+      print("object");
       if (item.productsModel.id == product.id) {
         foundItem = item;
         break; // Exit the loop once found
@@ -284,12 +279,12 @@ class AddToCartUi extends StatelessWidget {
         },
         child: Container(
           width: double.infinity,
-          height: 50,
+          height: 30,
           color: Colors.white,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("اضافة الى السلة", style: TextStyle(fontSize: 12)),
+              Text("اضافة الى السلة", style: TextStyle(fontSize: 8)),
               Icon(Icons.shopping_cart, color: Theme.of(context).primaryColor),
             ],
           ),
@@ -310,7 +305,10 @@ class AddToCartUi extends StatelessWidget {
                   cartController.incrementProductQuantity(product);
                   stateController.update();
                 },
-                icon: Icon(Icons.add),
+                icon: Icon(
+                  Icons.add,
+                  size: 10,
+                ),
               ),
               Text(foundItem.productCount.toString()),
               IconButton(
@@ -370,6 +368,10 @@ class CartController {
 
   void removeProduct(String productId) {
     products.removeWhere((item) => item.productsModel.id == productId);
+  }
+
+  void removeOffer(String offerId) {
+    offers.removeWhere((item) => item.offerModel.id == offerId);
   }
 
   void incrementOfferQuantity(OfferModel offerModel, {int count = 1}) {

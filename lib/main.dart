@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'مطعم الأرض الخضراء',
       navigatorKey: navigatorKey,
+      locale: Locale('ar', ''),
       theme: ThemeData(
         textTheme: const TextTheme(
           titleLarge: TextStyle(
@@ -56,6 +57,7 @@ class MyApp extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
+
         // This is the theme of your application.
         //
         // TRY THIS: Try running your application with "flutter run". You'll see

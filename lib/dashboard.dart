@@ -2,14 +2,12 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:gl1/main.dart';
+import 'package:gl1/cart.dart';
 import 'package:gl1/models/categoryModel.dart';
 import 'package:gl1/models/homeComponent.dart';
 import 'package:gl1/models/userModel.dart';
 import 'package:gl1/orders.dart';
 import 'package:gl1/products.dart';
-import 'package:gl1/shared/imageWidget.dart';
 import 'package:gl1/shared/loading.dart';
 import 'package:gl1/shared/mainCompose.dart';
 import 'package:gl1/shared/requestServer.dart';
@@ -141,7 +139,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           Expanded(
                             child: InkWell(
                               onTap: () {
-                                toast("cart");
+                                goToCart();
                               },
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -149,7 +147,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(cartController.products.length
+                                      Text((cartController.products.length +
+                                              cartController.offers.length)
                                           .toString()),
                                       Icon(Icons.shopping_cart, size: 30),
                                     ],
@@ -241,6 +240,13 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  goToCart() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CartPage()),
+    );
+  }
+
   toast(text) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -281,6 +287,7 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
         child: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.only(
@@ -288,7 +295,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   topRight: Radius.circular(12.0), // Rounded top-right corner
                 ),
                 child: CachedNetworkImage(
-                  height: 180,
+                  height: 140,
                   width: double.infinity,
                   fit: BoxFit.fill,
                   imageUrl: category.categoryImagePath + category.image,
@@ -299,7 +306,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(2.0),
+                padding: const EdgeInsets.only(bottom: 4),
                 child: Text(category.name),
               ),
             ],
