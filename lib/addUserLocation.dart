@@ -27,6 +27,8 @@ class _addUserLocationPageState extends State<addUserLocationPage> {
   late StateController stateController;
   late LocationService locationService;
   var isEnabled = false;
+  bool? isAllowd;
+
   String? latLong;
   String? errorLatLong;
 
@@ -39,6 +41,12 @@ class _addUserLocationPageState extends State<addUserLocationPage> {
       // final isEnabled =
 
       isEnabled = await Geolocator.isLocationServiceEnabled();
+      // if (!isEnabled) {
+      //   // stateController.errorStateAUD("يجب تفعيل الموقع للمتابعة");
+      // } else {
+
+      // }
+
       // js.context.callMethod('isGeolocationEnabled') as bool;
     });
   }
@@ -74,54 +82,67 @@ class _addUserLocationPageState extends State<addUserLocationPage> {
                 if (isEnabled)
                   Column(
                     children: [
-                      Text("Enabled"),
-                      ElevatedButton(
-                          onPressed: () async {
-                            try {
-                              // Request the user's location
-                              // var position = await js.context
-                              //     .callMethod('requestLocation');
-                              // var r = await position;
-                              Position position =
-                                  await Geolocator.getCurrentPosition(
-                                      desiredAccuracy: LocationAccuracy.high);
-                              // print("object");
-                              // print(r);
+                      if (isAllowd != null)
+                        Column(
+                          children: [
+                            if (isAllowd == false)
+                              ElevatedButton(
+                                  onPressed: () async {
+                                    stateController.startAud();
+                                    Position position =
+                                        await Geolocator.getCurrentPosition(
+                                            desiredAccuracy:
+                                                LocationAccuracy.high);
 
-                              // position.then((result) {
-                              //   print(object)
-                              //   // final latitude = result['latitude'];
-                              //   // final longitude = result['longitude'];
-                              //   // print(
-                              //   //     'Latitude: $latitude, Longitude: $longitude');
-                              // }).catchError((error) {
-                              //   print('Error retrieving location: $error');
-                              // });
+                                    latLong =
+                                        'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
+                                    isAllowd = true;
+                                    stateController.successState();
+                                  },
+                                  child: Text("السماح للموقع"))
+                            else
+                              Text(latLong!)
+                          ],
+                        )
+                      else
+                        ElevatedButton(
+                            onPressed: () async {
+                              stateController.startAud();
 
-                              // print("object");
-                              // print(position);
-                              // print(position['coords']);
-                              // print(position);
-                              // print(position);
+                              try {
+                                Position position =
+                                    await Geolocator.getCurrentPosition(
+                                        desiredAccuracy: LocationAccuracy.high);
 
-                              latLong =
-                                  'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
-                              // print();
-                              stateController.update();
-                            } catch (e) {
-                              print('Error retrieving location: $e');
-                              errorLatLong = e.toString();
-                              stateController.update();
-                            }
-                          },
-                          child: Text("getLat")),
-                      if (latLong != null) Text(latLong!),
+                                latLong =
+                                    'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
+                                isAllowd = true;
+                                stateController.successStateAUD();
+                                // stateController.update();
+                              } catch (e) {
+                                isAllowd = false;
+                                stateController
+                                    .errorStateAUD("يجب السماح للموقع");
+                              }
+                            },
+                            child: Text("Allow Gps Retive info")),
                       if (errorLatLong != null)
                         Text('Error retrieving location: $errorLatLong'),
                     ],
                   )
                 else
-                  Text("Disabled")
+                  Column(
+                    children: [
+                      Text("افتح الموقع واضغط على اعادة المحاولة"),
+                      ElevatedButton(
+                          onPressed: () async {
+                            isEnabled =
+                                await Geolocator.isLocationServiceEnabled();
+                            stateController.update();
+                          },
+                          child: Text("اعادة المحاولة"))
+                    ],
+                  )
               ],
             ),
           ),
