@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:html' as html;
 import 'package:geolocator/geolocator.dart';
 
 class LocationService {
@@ -36,12 +37,8 @@ class LocationService {
   }
 
   Future<bool> isOpend() async {
-    bool serviceEnabled;
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Location services are not enabled.
-      print('Location services are disabled.');
-      return true;
+    if (html.window.navigator.geolocation != null) {
+      return true; // Location services are enabled
     }
     return false;
   }
