@@ -265,7 +265,10 @@ class _DashboardPageState extends State<DashboardPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProductsPage(categoryId: category.id),
+            builder: (context) => ProductsPage(
+              categoryId: category.id,
+              categoryName: category.name,
+            ),
           ),
         );
         // ScaffoldMessenger.of(context).showSnackBar(

@@ -14,8 +14,9 @@ import 'package:provider/provider.dart';
 
 class ProductsPage extends StatefulWidget {
   final String categoryId;
+  final String categoryName;
 
-  ProductsPage({required this.categoryId});
+  ProductsPage({required this.categoryId, required this.categoryName});
 
   @override
   State<ProductsPage> createState() => _ProductsPageState();
@@ -43,18 +44,26 @@ class _ProductsPageState extends State<ProductsPage> {
   Widget build(BuildContext context) {
     stateController = Provider.of<StateController>(context);
 
-    return Scaffold(
-        body: MainCompose(
-            page: pageName,
-            padding: 10,
-            stateController: stateController,
-            onRead: sendPostRequestGetProducts,
-            content: () {
-              if (isInitProducts) {
-                return mainContent();
-              }
-              return SizedBox();
-            }));
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: greenColor,
+            foregroundColor: Colors.white,
+            title: Text(widget.categoryName),
+          ),
+          body: MainCompose(
+              page: pageName,
+              padding: 10,
+              stateController: stateController,
+              onRead: sendPostRequestGetProducts,
+              content: () {
+                if (isInitProducts) {
+                  return mainContent();
+                }
+                return SizedBox();
+              })),
+    );
   }
 
   mainContent() {
@@ -148,7 +157,7 @@ class ProductsCompose extends StatelessWidget {
         return Card(
           margin: EdgeInsets.all(5.0),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(2.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -180,14 +189,14 @@ class ProductsCompose extends StatelessWidget {
                       ],
                     ),
                     if (product.productsGroupsName != "الرئيسية")
-                      ElevatedButton(
-                        onPressed: () {
+                      myButtonSmall(
+                        "الانواع",
+                        () {
                           // Handle types click
                           showModalList(context, cartController,
                               product.productsGroupsId, products);
                         },
-                        child: Text("الانواع"),
-                      ),
+                      )
                   ],
                 ),
                 Divider(),
@@ -264,7 +273,6 @@ class AddToCartUi extends StatelessWidget {
     ProductInCart? foundItem;
 
     for (var item in cartController.products) {
-      print("object");
       if (item.productsModel.id == product.id) {
         foundItem = item;
         break; // Exit the loop once found

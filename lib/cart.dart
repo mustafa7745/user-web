@@ -30,18 +30,23 @@ class _CartPageState extends State<CartPage> {
     stateController = Provider.of<StateController>(context);
     // cartHelper = CartHelper();
 
-    return Scaffold(
-        body: MainCompose(
-            page: pageName,
-            padding: 0,
-            stateController: stateController,
-            onRead: sendPostRequestGetHome,
-            content: () {
-              if (true) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: greenColor,
+            foregroundColor: Colors.white,
+            title: Text("السلة"),
+          ),
+          body: MainCompose(
+              page: pageName,
+              padding: 0,
+              stateController: stateController,
+              onRead: sendPostRequestGetHome,
+              content: () {
                 return mainContent();
-              }
-              return SizedBox();
-            }));
+              })),
+    );
   }
 
   mainContent() {
@@ -83,14 +88,11 @@ class _CartPageState extends State<CartPage> {
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      if (deliveryPrice != null)
-                        Text(
-                          deliveryPrice.toString(),
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        )
-                      else
-                        Text("عرض السعر")
+                      Text(
+                        deliveryPrice?.toString() ?? "عرض السعر",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
                     ],
                   ),
                 ),
@@ -115,67 +117,47 @@ class _CartPageState extends State<CartPage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Colors.green, // Set the background color to green
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius
-                                .zero, // Make it rectangular (no rounded corners)
-                          ),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 16.0, horizontal: 24.0),
-                        ),
-                        child: Text(
-                          "تأكيد الطلب",
-                          style: TextStyle(
-                              color: Colors.white, // Text color
-                              fontFamily: 'bukraBold'),
-                        )),
-                  ),
-                )
+                      width: double.infinity,
+                      child: userLocation == null
+                          ? myButton("اختيار موقع التوصيل", () {
+                              goToUserLocations();
+                            })
+                          : myButton("تأكيد الطلب", () {})),
+                ),
               ],
             ),
           ),
         ),
-        Card(
-          color: cardColor,
-          child: Column(
-            children: [
-              const Text("موقع التوصيل"),
-              const Padding(
-                padding: EdgeInsets.only(bottom: 5.0),
-                child: Divider(
-                  thickness: 2,
-                  color: Color.fromARGB(255, 38, 39, 39),
+        if (userLocation != null)
+          Card(
+            color: cardColor,
+            child: Column(
+              children: [
+                const Text("موقع التوصيل"),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 5.0),
+                  child: Divider(
+                      thickness: 2, color: Color.fromARGB(255, 38, 39, 39)),
                 ),
-              ),
-              if (userLocation == null)
-                ElevatedButton(
-                    onPressed: () async {
-                      goToUserLocations();
-                    },
-                    child: Text("اختيار عنوان"))
-              else
                 SizedBox(
-                    child: Column(
-                  children: [
-                    Text(userLocation!.street.toString()),
-                    Text(userLocation!.nearTo.toString()),
-                    Text(userLocation!.contactPhone.toString()),
-                    ElevatedButton(
-                        onPressed: () {
-                          goToUserLocations();
-                        },
-                        child: Text("تغيير العنوان")),
-                  ],
-                ))
-            ],
+                  width: double.infinity,
+                  child: Column(
+                    children: [
+                      Text(userLocation!.street.toString()),
+                      Text(userLocation!.nearTo.toString()),
+                      Text(userLocation!.contactPhone.toString()),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child:
+                            myButtonSmall("تغيير العنوان", goToUserLocations),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        Expanded(child: CartHelper())
+        Expanded(child: CartHelper()),
       ],
     );
   }

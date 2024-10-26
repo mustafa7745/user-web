@@ -1,25 +1,17 @@
 import 'dart:convert';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gl1/addUserLocation.dart';
-import 'package:gl1/cart.dart';
 import 'package:gl1/main.dart';
-import 'package:gl1/models/categoryModel.dart';
-import 'package:gl1/models/homeComponent.dart';
 import 'package:gl1/models/userLocationMdel.dart';
-import 'package:gl1/models/userModel.dart';
-import 'package:gl1/orders.dart';
-import 'package:gl1/products.dart';
-import 'package:gl1/shared/loading.dart';
 import 'package:gl1/shared/mainCompose.dart';
 import 'package:gl1/shared/requestServer.dart';
 import 'package:gl1/shared/stateController.dart';
 import 'package:gl1/shared/urls.dart';
-import 'package:gl1/storage/homeComponentStorage.dart';
 import 'package:gl1/storage/userStorage.dart';
-import 'package:gl1/updateName.dart';
 import 'package:provider/provider.dart';
+
+List<UserLocationModel>? userLocations;
 
 class UserLocationsPage extends StatefulWidget {
   @override
@@ -27,9 +19,8 @@ class UserLocationsPage extends StatefulWidget {
 }
 
 class _UserLocationsPageState extends State<UserLocationsPage> {
-  final pageName = "dashboard";
+  final pageName = "userLocations";
 
-  List<UserLocationModel> userLocations = [];
   final Requestserver requestserver = Requestserver();
   late StateController stateController;
   UserStorage userStorage = UserStorage();
@@ -40,7 +31,9 @@ class _UserLocationsPageState extends State<UserLocationsPage> {
     // Call sendPostRequestInit after the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       stateController.setPage(pageName);
-      sendPostRequestGetLocations();
+      if (userLocations == null) {
+        sendPostRequestGetLocations();
+      }
     });
   }
 
@@ -48,72 +41,100 @@ class _UserLocationsPageState extends State<UserLocationsPage> {
   Widget build(BuildContext context) {
     stateController = Provider.of<StateController>(context);
 
-    return Scaffold(
-        body: MainCompose(
-            page: pageName,
-            padding: 0,
-            stateController: stateController,
-            onRead: sendPostRequestGetLocations,
-            content: () {
-              return Column(
-                children: [
-                  ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => addUserLocationPage()),
-                        );
-                      },
-                      child: Text("اضافة")),
-                  Expanded(child: mainContent())
-                ],
-              );
-            }));
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: greenColor,
+            foregroundColor: Colors.white,
+            title: Text("عناويني"),
+          ),
+          body: MainCompose(
+              page: pageName,
+              padding: 0,
+              stateController: stateController,
+              onRead: sendPostRequestGetLocations,
+              content: () {
+                return Column(
+                  children: [
+                    Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: myButton(
+                            "اضافة",
+                            () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        addUserLocationPage()),
+                              );
+                              if (result != null) {
+                                final d = UserLocationModel.fromJson(
+                                    jsonDecode(result));
+                                userLocations!.insert(0, d);
+                                stateController.update();
+                              }
+                            },
+                          ),
+                        )),
+                    Expanded(child: mainContent())
+                  ],
+                );
+              })),
+    );
   }
 
   mainContent() {
-    return ListView.builder(
-        itemCount: userLocations.length,
-        itemBuilder: (context, index) {
-          UserLocationModel userLocation = userLocations[index];
-          return Card(
-            child: Column(
-              children: [
-                Text(userLocation.street.toString()),
-                Text(userLocation.nearTo.toString()),
-                Text(userLocation.contactPhone.toString()),
-                ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(navigatorKey.currentContext!,
-                          jsonEncode(userLocation));
-                    },
-                    child: Text("اختيار")),
-              ],
-            ),
-          );
-        });
+    if (userLocations != null) {
+      if (userLocations!.isEmpty) {
+        return Center(
+          child: Text("لم يتم اضافة اي موقع بعد"),
+        );
+      } else {
+        return ListView.builder(
+            itemCount: userLocations!.length,
+            itemBuilder: (context, index) {
+              UserLocationModel userLocation = userLocations![index];
+              return Card(
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(userLocation.street.toString()),
+                        Text("الشارع"),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(userLocation.nearTo.toString()),
+                        Text("الوصف"),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(userLocation.contactPhone.toString()),
+                        Text("رقم الهاتف"),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: myButton("اختر", () {
+                        Navigator.pop(navigatorKey.currentContext!,
+                            jsonEncode(userLocation));
+                      }),
+                    )
+                  ],
+                ),
+              );
+            });
+      }
+    }
   }
-
-  // Future<void> goToAddName() async {
-  //   final result = await Navigator.push(
-  //     context,
-  //     MaterialPageRoute(builder: (context) => UpdateNamePage()),
-  //   );
-
-  //   // Show the returned value
-  //   if (result != null) {
-  //     // print(result);
-  //     // final user = User.fromJson(jsonDecode(result));
-  //     // userStorage.setUser(result);
-  //     // homeComponent.user = user;
-  //     // WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     //   stateController.setPage(pageName);
-  //     //   stateController.update();
-  //     //   toast("تمت الاضافة بنجاح");
-  //     // });
-  //   }
-  // }
 
   Future<void> sendPostRequestGetLocations() async {
     read();
