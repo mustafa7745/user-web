@@ -142,17 +142,24 @@ class _addUserLocationPageState extends State<addUserLocationPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Center(
-                    child: myButton("السماح للموقع بتحديد عنوان التوصيل",
-                        () async {
-                  stateController.startAud();
-                  Position position = await Geolocator.getCurrentPosition(
-                      desiredAccuracy: LocationAccuracy.high);
+                    child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text("تأكد من تشغيل ال GPS"),
+                    ),
+                    myButton("السماح للموقع بتحديد عنوان التوصيل", () async {
+                      stateController.startAud();
+                      Position position = await Geolocator.getCurrentPosition(
+                          desiredAccuracy: LocationAccuracy.high);
 
-                  latLong = "${position.latitude},${position.longitude}";
-                  // 'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
-                  isAllowd = true;
-                  stateController.successStateAUD();
-                })),
+                      latLong = "${position.latitude},${position.longitude}";
+                      // 'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
+                      isAllowd = true;
+                      stateController.successStateAUD();
+                    }),
+                  ],
+                )),
               ],
             ),
           if (errorLatLong != null)

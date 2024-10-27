@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gl1/cart.dart';
+import 'package:gl1/main.dart';
 import 'package:gl1/models/categoryModel.dart';
 import 'package:gl1/models/homeComponent.dart';
 import 'package:gl1/models/userModel.dart';
 import 'package:gl1/orders.dart';
 import 'package:gl1/products.dart';
+import 'package:gl1/search.dart';
 import 'package:gl1/shared/loading.dart';
 import 'package:gl1/shared/mainCompose.dart';
 import 'package:gl1/shared/requestServer.dart';
@@ -174,7 +176,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           Expanded(
                             child: InkWell(
                               onTap: () {
-                                toast("search");
+                                goToSearch();
                               },
                               child: Column(
                                 children: [
@@ -198,7 +200,7 @@ class _DashboardPageState extends State<DashboardPage> {
           child: GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, // Two items per row
-              childAspectRatio: 0.90, // Adjust as needed for item shape
+              childAspectRatio: 0.85, // Adjust as needed for item shape
               crossAxisSpacing: 10, // Space between columns
               mainAxisSpacing: 10, // Space between rows
             ),
@@ -240,10 +242,10 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  goToCart() {
+  goToSearch() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => CartPage()),
+      MaterialPageRoute(builder: (context) => SearchPage()),
     );
   }
 
@@ -297,15 +299,16 @@ class _DashboardPageState extends State<DashboardPage> {
                   topLeft: Radius.circular(12.0), // Rounded top-left corner
                   topRight: Radius.circular(12.0), // Rounded top-right corner
                 ),
-                child: CachedNetworkImage(
-                  height: 140,
-                  width: double.infinity,
-                  fit: BoxFit.fill,
-                  imageUrl: category.categoryImagePath + category.image,
-                  placeholder: (context, url) =>
-                      LoadingWidget(), // Loading indicator
-                  errorWidget: (context, url, error) =>
-                      Icon(Icons.error), // Error widget
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: CachedNetworkImage(
+                    fit: BoxFit.cover,
+                    imageUrl: category.categoryImagePath + category.image,
+                    placeholder: (context, url) =>
+                        LoadingWidget(), // Loading indicator
+                    errorWidget: (context, url, error) =>
+                        Icon(Icons.error), // Error widget
+                  ),
                 ),
               ),
               Padding(
@@ -329,7 +332,7 @@ class _DashboardPageState extends State<DashboardPage> {
       // print(diff.inMinutes);
       // print(getCurrentDate());
       // print(homeComponentStorage.getDate());
-      if (diff.inMinutes > 3) {
+      if (diff.inMinutes > 200) {
         read(homeComponentStorage);
       } else {
         homeComponent = homeComponentStorage.getHomeComponent();
@@ -387,4 +390,11 @@ class _DashboardPageState extends State<DashboardPage> {
       },
     );
   }
+}
+
+goToCart() {
+  Navigator.push(
+    navigatorKey.currentContext!,
+    MaterialPageRoute(builder: (context) => CartPage()),
+  );
 }

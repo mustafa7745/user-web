@@ -144,7 +144,7 @@ class ProductsCompose extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final newList = groupProductsByGroupName(products);
-
+    print(newList);
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -153,108 +153,138 @@ class ProductsCompose extends StatelessWidget {
       itemCount: newList.length,
       itemBuilder: (context, index) {
         final product = newList[index];
-
-        return Card(
-          margin: EdgeInsets.all(5.0),
-          child: Padding(
-            padding: const EdgeInsets.all(2.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  product.name,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                ),
-                Divider(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      children: [
-                        Text(" ريال "),
-                        Text(
-                          formatPrice(product.postPrice),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (product.productsGroupsName != "الرئيسية")
-                      myButtonSmall(
-                        "الانواع",
-                        () {
-                          // Handle types click
-                          showModalList(context, cartController,
-                              product.productsGroupsId, products);
-                        },
-                      )
-                  ],
-                ),
-                Divider(),
-                // Availability Card
-                if (product.isAvailable == "0")
-                  Container(
-                    color: Colors.red,
-                    child: Center(
-                      child: Text(
-                        "تم ايقافه مؤقتا",
-                        style: TextStyle(color: Colors.white, fontSize: 12),
-                      ),
-                    ),
-                  )
-                else
-                  AddToCartUi(product: product), // Your AddToCart UI here
-                // Image Carousel
-                SizedBox(
-                  height: 5,
-                ),
-                if (product.productImages.isNotEmpty)
-                  Expanded(
-                    child: PageView.builder(
-                      itemCount: product.productImages.length,
-                      itemBuilder: (context, imageIndex) {
-                        return CachedNetworkImage(
-                          height: 140,
-                          width: double.infinity,
-                          fit: BoxFit.fill,
-                          imageUrl: product.productImages[imageIndex].image,
-                          placeholder: (context, url) =>
-                              LoadingWidget(), // Loading indicator
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.error), // Error widget
-                        );
-                        // Image.network(
-                        //         product.productImages[imageIndex].image,
-                        //         fit: BoxFit.cover,
-                        //       );
-                      },
-                    ),
-                  )
-                else
-                  Text(
-                    "لايوجد صور لهذا الصنف",
-                    style: TextStyle(fontSize: 8),
-                  ),
-              ],
-            ),
-          ),
-        );
+        return productInMain(product: product, products: products);
       },
     );
   }
+}
 
-  List<ProductModel> groupProductsByGroupName(List<ProductModel> products) {
-    // Implement your grouping logic here
-    return products; // Modify this according to your grouping logic
+List<ProductModel> groupProductsByGroupName(List<ProductModel> products) {
+  // Create a set to track added group names
+  Set<String> addedGroups = {};
+
+  // Create a list to hold the unique products
+  List<ProductModel> uniqueProducts = [];
+
+  for (var product in products) {
+    // Check if the product's group has already been added
+    if (!addedGroups.contains(product.productsGroupsName)) {
+      // If not, add the product to the unique list and mark the group as added
+      uniqueProducts.add(product);
+      addedGroups.add(product.productsGroupsName);
+    }
+  }
+
+  return uniqueProducts;
+}
+
+class productInMain extends StatelessWidget {
+  const productInMain({
+    super.key,
+    required this.product,
+    required this.products,
+  });
+
+  final ProductModel product;
+  final List<ProductModel> products;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.all(5.0),
+      child: Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: Column(
+          children: [
+            Text(
+              product.name,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11,
+                color: Theme.of(context).primaryColor,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
+            Divider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      formatPrice(product.postPrice),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Text(" ريال "),
+                  ],
+                ),
+                if (product.productsGroupsName != "الرئيسية")
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: myButtonSmall(
+                      "الانواع",
+                      () {
+                        // Handle types click
+                        showModalList(context, cartController,
+                            product.productsGroupsId, products);
+                      },
+                    ),
+                  )
+              ],
+            ),
+            Divider(),
+            // Availability Card
+            if (product.isAvailable == "0")
+              Container(
+                color: Colors.red,
+                child: Center(
+                  child: Text(
+                    "تم ايقافه مؤقتا",
+                    style: TextStyle(color: Colors.white, fontSize: 12),
+                  ),
+                ),
+              )
+            else
+              AddToCartUi(product: product), // Your AddToCart UI here
+            // Image Carousel
+            SizedBox(
+              height: 5,
+            ),
+            if (product.productImages.isNotEmpty)
+              Expanded(
+                child: PageView.builder(
+                  itemCount: product.productImages.length,
+                  itemBuilder: (context, imageIndex) {
+                    return AspectRatio(
+                      aspectRatio: 1,
+                      child: CachedNetworkImage(
+                        fit: BoxFit.cover,
+                        imageUrl: product.productImages[imageIndex].image,
+                        placeholder: (context, url) =>
+                            LoadingWidget(), // Loading indicator
+                        errorWidget: (context, url, error) =>
+                            Icon(Icons.error), // Error widget
+                      ),
+                    );
+                  },
+                ),
+              )
+            else
+              Center(
+                child: Text(
+                  "لايوجد صور لهذا الصنف",
+                  style: TextStyle(fontSize: 8),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -292,8 +322,8 @@ class AddToCartUi extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("اضافة الى السلة", style: TextStyle(fontSize: 8)),
-              Icon(Icons.shopping_cart, color: Theme.of(context).primaryColor),
+              Icon(Icons.shopping_cart, color: greenColor),
+              Text("اضافة الى السلة", style: TextStyle(fontSize: 12)),
             ],
           ),
         ),
@@ -301,12 +331,13 @@ class AddToCartUi extends StatelessWidget {
     } else {
       return Container(
         width: double.infinity,
-        height: 50,
+        height: 30,
         color: Colors.white,
         child: Directionality(
           textDirection: TextDirection.rtl,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               IconButton(
                 onPressed: () {
@@ -315,7 +346,7 @@ class AddToCartUi extends StatelessWidget {
                 },
                 icon: Icon(
                   Icons.add,
-                  size: 10,
+                  size: 17,
                 ),
               ),
               Text(foundItem.productCount.toString()),
@@ -324,14 +355,18 @@ class AddToCartUi extends StatelessWidget {
                   cartController.decrementProductQuantity(product);
                   stateController.update();
                 },
-                icon: Icon(Icons.remove),
+                icon: Icon(Icons.remove, size: 17),
               ),
               IconButton(
                 onPressed: () {
                   cartController.removeProduct(product.id);
                   stateController.update();
                 },
-                icon: Icon(Icons.delete, color: Colors.red),
+                icon: Icon(
+                  Icons.delete,
+                  color: Colors.red,
+                  size: 17,
+                ),
               ),
             ],
           ),
@@ -464,7 +499,8 @@ void showModalList(BuildContext context, CartController cartController,
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      return Dialog(
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
         child: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
@@ -481,20 +517,28 @@ void showModalList(BuildContext context, CartController cartController,
                   namePriceModal(product),
                   Expanded(
                     child: product.productImages.isEmpty
-                        ? Center(
-                            child: Text("لايوجد صور لهذا الصنف",
-                                style: TextStyle(fontSize: 8)))
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Center(
+                                  child: Text("لايوجد صور لهذا الصنف",
+                                      style: TextStyle(fontSize: 8))),
+                            ],
+                          )
                         : PageView.builder(
                             itemCount: product.productImages.length,
                             itemBuilder: (context, imgIndex) {
-                              return CachedNetworkImage(
-                                width: double.infinity,
-                                fit: BoxFit.fill,
-                                imageUrl: product.productImages[imgIndex].image,
-                                placeholder: (context, url) =>
-                                    LoadingWidget(), // Loading indicator
-                                errorWidget: (context, url, error) =>
-                                    Icon(Icons.error), // Error widget
+                              return AspectRatio(
+                                aspectRatio: 1,
+                                child: CachedNetworkImage(
+                                  fit: BoxFit.cover,
+                                  imageUrl:
+                                      product.productImages[imgIndex].image,
+                                  placeholder: (context, url) =>
+                                      LoadingWidget(), // Loading indicator
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error), // Error widget
+                                ),
                               );
                             },
                           ),
