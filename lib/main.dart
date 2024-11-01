@@ -107,6 +107,31 @@ bool isInstallPromptAvailable() {
   return js.context.callMethod('isInstallPromptAvailable') as bool;
 }
 
+void checkInit() {
+  final requestserver = Requestserver();
+  if (!requestserver.isInit()) {
+    Navigator.pushAndRemoveUntil(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => InitPage()),
+      (Route<dynamic> route) => false,
+    );
+  } else {
+    if (requestserver.isLogined()) {
+      Navigator.pushAndRemoveUntil(
+        navigatorKey.currentContext!,
+        MaterialPageRoute(builder: (context) => DashboardPage()),
+        (Route<dynamic> route) => false,
+      );
+    } else {
+      Navigator.pushAndRemoveUntil(
+        navigatorKey.currentContext!,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+        (Route<dynamic> route) => false,
+      );
+    }
+  }
+}
+
 class _MyHomePageState extends State<MyHomePage> {
   void delayedFunction() async {
     if (Theme.of(context).platform == TargetPlatform.android) {
@@ -118,8 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
           (Route<dynamic> route) => false,
         );
       } else {
-        final requestserver = Requestserver();
-        checkInit(requestserver);
+        checkInit();
       }
     } else {
       final Uri uri = Uri.parse(
@@ -130,30 +154,6 @@ class _MyHomePageState extends State<MyHomePage> {
         await launchUrl(uri);
         Navigator.of(navigatorKey.currentContext!)
             .popUntil((route) => route.isFirst);
-      }
-    }
-  }
-
-  void checkInit(Requestserver requestserver) {
-    if (!requestserver.isInit()) {
-      Navigator.pushAndRemoveUntil(
-        navigatorKey.currentContext!,
-        MaterialPageRoute(builder: (context) => InitPage()),
-        (Route<dynamic> route) => false,
-      );
-    } else {
-      if (requestserver.isLogined()) {
-        Navigator.pushAndRemoveUntil(
-          navigatorKey.currentContext!,
-          MaterialPageRoute(builder: (context) => DashboardPage()),
-          (Route<dynamic> route) => false,
-        );
-      } else {
-        Navigator.pushAndRemoveUntil(
-          navigatorKey.currentContext!,
-          MaterialPageRoute(builder: (context) => LoginPage()),
-          (Route<dynamic> route) => false,
-        );
       }
     }
   }
