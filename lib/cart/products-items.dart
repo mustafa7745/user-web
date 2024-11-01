@@ -168,7 +168,7 @@ class CartHelper extends StatelessWidget {
                             icon: Icon(Icons.add),
                           ),
                           Text(
-                            foundItem.productCount.toString().toString(),
+                            "   ",
                             textAlign: TextAlign.center,
                           ),
                           IconButton(

@@ -134,7 +134,7 @@ void checkInit() {
 
 class _MyHomePageState extends State<MyHomePage> {
   void delayedFunction() async {
-    if (Theme.of(context).platform == TargetPlatform.android) {
+    if (Theme.of(context).platform == TargetPlatform.iOS) {
       await Future.delayed(const Duration(seconds: 3)); // Delay for 2 seconds
       if (isInstallPromptAvailable()) {
         Navigator.pushAndRemoveUntil(
