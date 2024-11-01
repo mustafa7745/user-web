@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gl1/dashboard.dart';
 import 'package:gl1/init.dart';
+import 'package:gl1/installApp.dart';
 import 'package:gl1/login.dart';
 import 'package:gl1/shared/requestServer.dart';
 import 'package:gl1/shared/stateController.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'dart:js' as js;
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
@@ -99,12 +103,38 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+bool isInstallPromptAvailable() {
+  return js.context.callMethod('isInstallPromptAvailable') as bool;
+}
+
 class _MyHomePageState extends State<MyHomePage> {
   void delayedFunction() async {
-    final requestserver = Requestserver();
+    if (Theme.of(context).platform == TargetPlatform.android) {
+      await Future.delayed(const Duration(seconds: 3)); // Delay for 2 seconds
+      if (isInstallPromptAvailable()) {
+        Navigator.pushAndRemoveUntil(
+          navigatorKey.currentContext!,
+          MaterialPageRoute(builder: (context) => InstallAppPage()),
+          (Route<dynamic> route) => false,
+        );
+      } else {
+        final requestserver = Requestserver();
+        checkInit(requestserver);
+      }
+    } else {
+      final Uri uri = Uri.parse(
+          "https://play.google.com/store/apps/details?id=com.yemen_restaurant.greenland");
 
-    await Future.delayed(const Duration(seconds: 3)); // Delay for 2 seconds
+      // Check if the URL can be launched
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri);
+        Navigator.of(navigatorKey.currentContext!)
+            .popUntil((route) => route.isFirst);
+      }
+    }
+  }
 
+  void checkInit(Requestserver requestserver) {
     if (!requestserver.isInit()) {
       Navigator.pushAndRemoveUntil(
         navigatorKey.currentContext!,
