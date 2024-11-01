@@ -48,11 +48,6 @@ class _InstallAppPageState extends State<InstallAppPage> {
                     width: 50,
                     height: 50,
                   ),
-                  Image.asset(
-                    'assets/images/apple.jpg',
-                    width: 60,
-                    height: 60,
-                  ),
                 ],
               ),
             ),
